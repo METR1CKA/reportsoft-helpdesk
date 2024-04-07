@@ -34,6 +34,11 @@ return new class extends Migration {
         ->on('projects')
         ->onUpdate('cascade')
         ->onDelete('cascade');
+      $table->foreignId('report_status_id')
+        ->references('id')
+        ->on('report_statuses')
+        ->onUpdate('cascade')
+        ->onDelete('cascade');
       $table->string('name', 200)->nullable(false);
       $table->longText('description')->nullable(false);
       $table->longText('comments')->nullable(false);
