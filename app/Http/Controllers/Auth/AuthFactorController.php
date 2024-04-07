@@ -10,23 +10,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\SendCodeAuthFactor;
+use App\Services\GenerateCodes;
 
 class AuthFactorController extends Controller
 {
-  /**
-   * Generar un código de verificación.
-   *
-   * @return string
-   */
-  private function generateCode(): string
-  {
-    return strval(
-      rand(100000, 999999)
-    );
-  }
-
   /**
    * Enviar el código de verificación a través de SMS.
    *
@@ -35,37 +24,17 @@ class AuthFactorController extends Controller
    *
    * @return bool
    */
-  private function sendSmsCode($phone, $code)
+  private function sendMailCode($user, $code)
   {
-    Log::info('SEND CODE', [
-      'STATUS' => 'SUCCESS',
-      'ACTION' => 'Send code',
-      'PHONE' => $phone,
-      'CONTROLLER' => AuthFactorController::class,
-      'METHOD' => 'sendSmsCode',
-      'CODE' => $code,
-    ]);
-
     try {
-      $account_sid = env('TWILIO_SID');
-
-      $auth_token = env('TWILIO_AUTH_TOKEN');
-
-      $twilio_number = env('TWILIO_NUMBER');
-
-      $client = new Client($account_sid, $auth_token);
-
-      $client->messages->create(
-        $phone,
-        [
-          'from' => $twilio_number,
-          'body' => "Tu código de verificación es: {$code}"
-        ]
-      );
+      $user->notify(new SendCodeAuthFactor($user, $code));
 
       Log::info('SEND CODE', [
         'STATUS' => 'SUCCESS',
         'ACTION' => 'Send code',
+        'CONTROLLER' => AuthFactorController::class,
+        'METHOD' => 'sendMailCode',
+        'CODE' => $code,
       ]);
     } catch (\Exception $e) {
       Log::error('SEND CODE WITH ERROR', [
@@ -74,7 +43,6 @@ class AuthFactorController extends Controller
         'ERROR' => $e->getMessage(),
         'LINE_CODE' => $e->getLine(),
         'FILE' => $e->getFile(),
-        'TRACE' => $e->getTraceAsString(),
       ]);
 
       return false;
@@ -84,50 +52,17 @@ class AuthFactorController extends Controller
   }
 
   /**
-   * Reenviar el código de verificación a través de SMS.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   *
-   * @return \Illuminate\Http\RedirectResponse
-   */
-  public function resend(Request $request): RedirectResponse
-  {
-    // Generar un código de verificación
-    $code = $this->generateCode();
-
-    $request->user()->authFA()->update([
-      'code' => Hash::make($code),
-    ]);
-
-    // Enviar el código a través de SMS usando Twilio
-    $send = $this->sendSmsCode($request->user()->phone, $code);
-
-    if (!$send) {
-      return back()
-        ->withErrors(['phone' => 'Error sending code']);
-    }
-
-    // Redirigir al usuario
-    return redirect()
-      ->back()
-      ->with('status', 'The verification code has been sent.');
-  }
-
-  /**
    * Muestra la vista para establecer el número de teléfono.
-   *
    * @return RedirectResponse|View
    */
-  public function create()
+  public function viewSendCode2FA(): RedirectResponse|View
   {
     $roles = Role::getRoles();
 
-    $phone = Auth::user()->phone;
-
     $role_id = Auth::user()->role->first()->id;
 
-    return !$phone && $role_id == $roles['ADMIN']
-      ? view('auth.phone')
+    return $role_id == $roles['ADMIN']
+      ? view('auth.factor.send-code')
       : redirect()->intended(RouteServiceProvider::HOME);
   }
 
@@ -138,31 +73,96 @@ class AuthFactorController extends Controller
    *
    * @return \Illuminate\Http\RedirectResponse
    */
-  public function store(Request $request): RedirectResponse
+  public function sendCode2FA(Request $request): RedirectResponse
   {
-    // Validar el número de teléfono
-    $request->validate([
-      'phone' => ['required', 'string', 'regex:/^\+\d{1,3}[- ]?\d{10}$/']
-    ]);
-
     // Generar un código de verificación
-    $code = $this->generateCode();
+    $code = GenerateCodes::generateNumberCode();
 
-    // Guardar el código en la bd
-    $request->user()->update([
-      'phone' => $request->phone,
-    ]);
+    // Actualizar el código de verificación en la base de datos
+    $request->user()->authFA()
+      ->where('type', '2FA')
+      ->update([
+        'code' => Hash::make($code),
+      ]);
 
-    $request->user()->authFA()->update([
-      'code' => Hash::make($code),
-    ]);
-
-    // Enviar el código a través de SMS usando Twilio
-    $send = $this->sendSmsCode($request->phone, $code);
+    // Enviar el código a través de EMAIL usando MAIL
+    $send = $this->sendMailCode($request->user(), $code);
 
     if (!$send) {
-      return back()
-        ->withErrors(['phone' => 'Error sending code']);
+      return redirect()
+        ->back()
+        ->with('status', 'verification-link-sent-error');
+    }
+
+    // Redirigir al usuario
+    return redirect()
+      ->back()
+      ->with('status', 'verification-link-sent');
+  }
+
+  /**
+   * Muestra la vista para verificar el código.
+   *
+   * @return RedirectResponse|View
+   */
+  public function viewVerifyCode2FA(): RedirectResponse|View
+  {
+    $roles = Role::getRoles();
+
+    $code_verified = Auth::user()->authFA()
+      ->where('type', '2FA')
+      ->first()
+      ->code_verified;
+
+    $role_id = Auth::user()->role()->first()->id;
+
+    return !$code_verified && $role_id == $roles['ADMIN']
+      ? view('auth.factor.verify-2fa')
+      : redirect()->intended(RouteServiceProvider::HOME);
+  }
+
+  /**
+   * Validar el código de verificación.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   *
+   * @return \Illuminate\Http\RedirectResponse
+   */
+  public function verifyCode2FA(Request $request): RedirectResponse
+  {
+    // Validar el código de verificación
+    $request->validate([
+      'code' => ['required', 'string', 'size:6'],
+      'g-recaptcha-response' => ['required', 'captcha'],
+    ]);
+
+    // Verificar si el código es correcto
+    $code_user = $request->user()->authFA()
+      ->where('type', '2FA')
+      ->first()
+      ->code;
+
+    $is_valid = Hash::check($request->code, $code_user);
+
+    if (!$is_valid) {
+      // El código es incorrecto, volver a mostrar el formulario de verificación
+      return redirect()
+        ->back()
+        ->withErrors(['code' => 'The 2FA code is incorrect.']);
+    }
+
+    // Marcar el código como verificado
+    $request->user()->authFA()
+      ->where('type', '2FA')
+      ->update([
+        'code_verified' => $is_valid,
+      ]);
+
+    // Autenticar al usuario si no es administrador
+    $roles = Role::getRoles();
+
+    if (Auth::user()->role()->first()->id != $roles['ADMIN']) {
+      Auth::login($request->user());
     }
 
     // Redirigir al usuario
@@ -174,20 +174,19 @@ class AuthFactorController extends Controller
    *
    * @return RedirectResponse|View
    */
-  public function edit()
+  public function viewVerifyCode3FA(): RedirectResponse|View
   {
     $roles = Role::getRoles();
 
-    $code_verified = Auth::user()->authFA->map(function ($authFA) {
-      return $authFA->code_verified;
-    });
+    $code_verified = Auth::user()->authFA()
+      ->where('type', '3FA')
+      ->first()
+      ->code_verified;
 
-    $code_verified = Auth::user()->authFA->first()->code_verified;
-
-    $role_id = Auth::user()->role->first()->id;
+    $role_id = Auth::user()->role()->first()->id;
 
     return !$code_verified && $role_id == $roles['ADMIN']
-      ? view('auth.verify')
+      ? view('auth.factor.verify-2fa')
       : redirect()->intended(RouteServiceProvider::HOME);
   }
 
@@ -198,32 +197,35 @@ class AuthFactorController extends Controller
    *
    * @return \Illuminate\Http\RedirectResponse
    */
-  public function update(Request $request): RedirectResponse
+  public function verifyCode3FA(Request $request): RedirectResponse
   {
     // Validar el código de verificación
     $request->validate([
-      'code' => ['required', 'string', 'size:6']
+      'code' => ['required', 'string', 'size:6'],
+      'g-recaptcha-response' => ['required', 'captcha'],
     ]);
 
     // Verificar si el código es correcto
-    $is_valid = $request->user()->authFA
-      ->filter(function ($authFA) {
-        return $authFA->type == '2FA';
-      })
-      ->every(function ($authFA) use ($request) {
-        return Hash::check($request->code, $authFA->code);
-      });
+    $code_user = $request->user()->authFA()
+      ->where('type', '3FA')
+      ->first()
+      ->code;
+
+    $is_valid = Hash::check($request->code, $code_user);
 
     if (!$is_valid) {
       // El código es incorrecto, volver a mostrar el formulario de verificación
-      return back()
-        ->withErrors(['code' => 'The verification code is incorrect.']);
+      return redirect()
+        ->back()
+        ->withErrors(['code' => 'The 3FA code is incorrect.']);
     }
 
     // Marcar el código como verificado
-    $request->user()->authFA()->update([
-      'code_verified' => $is_valid,
-    ]);
+    $request->user()->authFA()
+      ->where('type', '3FA')
+      ->update([
+        'code_verified' => $is_valid,
+      ]);
 
     // El código es correcto, autenticar al usuario
     Auth::login($request->user());

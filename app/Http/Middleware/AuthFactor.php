@@ -17,35 +17,35 @@ class AuthFactor
    */
   public function handle(Request $request, Closure $next): Response
   {
-    $check = Auth::check();
+    $_2fa = $request->user()->authFA
+      ->filter(function ($authFA) {
+        return $authFA->type == '2FA';
+      })
+      ->first();
 
-    if (!$check) {
-      return redirect()->route('login');
+    if (!$_2fa->code && !$_2fa->code_verified) {
+      return redirect()->route('2FA.send-code');
     }
 
-    $roles = Role::getRoles();
-
-    if (Auth::user()->role->first()->id == $roles['ADMIN']) {
-      $exists_phone = $request->user()->phone;
-
-      $auth_factor = $request->user()->authFA;
-
-      $all_codes = $auth_factor->map(function ($authFA) {
-        return $authFA->code;
-      });
-
-      if ($all_codes->contains(null) && !$exists_phone) {
-        return redirect()->route('auth-factor.send-code');
-      }
-
-      $all_codes_verified = $auth_factor->map(function ($authFA) {
-        return $authFA->code_verified;
-      });
-
-      if ($all_codes_verified->contains(false)) {
-        return redirect()->route('auth-factor.verify-code');
-      }
+    if ($_2fa->code && !$_2fa->code_verified) {
+      return redirect()->route('2FA.verify-code');
     }
+
+    // $roles = Role::getRoles();
+
+    // $user = $request->user();
+
+    // if ($user->role->first()->id == $roles['ADMIN']) {
+    //   $_3fa = $user->authFA
+    //     ->filter(function ($authFA) {
+    //       return $authFA->type == '3FA';
+    //     })
+    //     ->first();
+
+    //   if (!$_3fa->code_verified) {
+    //     return redirect()->route('3FA.verify-code');
+    //   }
+    // }
 
     return $next($request);
   }

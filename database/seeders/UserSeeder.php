@@ -28,9 +28,9 @@ class UserSeeder extends Seeder
       'type' => '2FA',
     ]);
 
-    // $admin->authFA()->create([
-    //   'type' => '3FA',
-    // ]);
+    $admin->authFA()->create([
+      'type' => '3FA',
+    ]);
 
     $coordinator = User::create([
       'username' => env('COORDINATOR_USERNAME'),
