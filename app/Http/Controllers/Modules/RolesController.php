@@ -109,7 +109,7 @@ class RolesController extends Controller
     if (!$role || !$role->active) {
       return redirect()
       ->back()
-      ->withErrors(['error', 'Cannot edit role, it is deactivated']);
+      ->withErrors(['error' => 'Cannot edit role, it is deactivated']);
     }
 
     return view('modules.roles.edit', [

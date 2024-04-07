@@ -108,7 +108,7 @@ class TeamsController extends Controller
     if (!$team || !$team->active) {
       return redirect()
       ->back()
-      ->withErrors(['error', 'Cannot edit team, it is deactivated']);
+      ->withErrors(['error' => 'Cannot edit team, it is deactivated']);
     }
 
     return view('modules.teams.edit', [

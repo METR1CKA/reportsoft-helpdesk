@@ -82,7 +82,6 @@
               @endforeach
             </tbody>
           </table>
-          <x-input-error class="mt-2" :messages="$errors->get('error')" />
         </div>
       </div>
     </div>

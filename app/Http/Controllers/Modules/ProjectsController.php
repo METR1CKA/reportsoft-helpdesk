@@ -110,7 +110,7 @@ class ProjectsController extends Controller
     if (!$project || !$project->active) {
       return redirect()
         ->back()
-        ->withErrors(['error', 'Cannot edit project, it is deactivated']);
+        ->withErrors(['error' => 'Cannot edit project, it is deactivated']);
     }
 
     return view('modules.projects.edit', [

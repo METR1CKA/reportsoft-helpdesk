@@ -109,7 +109,7 @@ class ReportStatusesController extends Controller
     if (!$report_status || !$report_status->active) {
       return redirect()
         ->back()
-        ->withErrors(['error', 'Cannot edit report status, it is deactivated']);
+        ->withErrors(['error' => 'Cannot edit report status, it is deactivated']);
     }
 
     return view('modules.report_statuses.edit', [

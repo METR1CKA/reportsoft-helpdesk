@@ -177,7 +177,7 @@ class UserController extends Controller
     if (!$user->active) {
       return redirect()
         ->back()
-        ->withErrors(['error', 'Cannot edit user, it is deactivated']);
+        ->withErrors(['error' => 'Cannot edit user, it is deactivated']);
     }
 
     $roles = Role::getRoles();
