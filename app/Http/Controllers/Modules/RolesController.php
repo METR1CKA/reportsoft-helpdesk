@@ -90,7 +90,7 @@ class RolesController extends Controller
 
       return redirect()
         ->back()
-        ->withErrors(['description' => 'There was an error creating the user.']);
+        ->withErrors(['error' => 'There was an error creating the user.']);
     }
 
     return redirect()->route('roles.index')
@@ -109,7 +109,7 @@ class RolesController extends Controller
     if (!$role || !$role->active) {
       return redirect()
       ->back()
-      ->with('status', 'Cannot edit role, it is deactivated');
+      ->withErrors(['error', 'Cannot edit role, it is deactivated']);
     }
 
     return view('modules.roles.edit', [
@@ -129,7 +129,7 @@ class RolesController extends Controller
     if (!$role || !$role->active) {
       return redirect()
         ->back()
-        ->withErrors(['description' => 'Role not found']);
+        ->withErrors(['error' => 'Role not found']);
     }
 
     $data = $request->validated();
@@ -157,7 +157,7 @@ class RolesController extends Controller
 
       return redirect()
         ->back()
-        ->withErrors(['description' => 'There was an error updating the role.']);
+        ->withErrors(['error' => 'There was an error updating the role.']);
     }
 
     return redirect()->route('roles.index')
@@ -169,40 +169,12 @@ class RolesController extends Controller
    */
   public function destroy($id): RedirectResponse
   {
-    Log::info('REQUEST TO DELETE ROLE', [
-      'ACTION' => 'Delete role',
-      'CONTROLLER' => RolesController::class,
-      'USER-AUTH' => Auth::user(),
-      'ID' => $id,
-      'METHOD' => 'destroy',
-    ]);
-
     $this->authorize('isValidRole', Auth::user());
 
     $role = Role::find($id);
 
-    if (!$role) {
-      Log::alert('ROLE NOT FOUND', [
-        'STATUS' => 'ERROR',
-        'ACTION' => 'Delete role',
-        'USER-AUTH' => Auth::user(),
-        'ROLE' => $role ?? 'NOT FOUND',
-      ]);
-
-      return redirect()
-        ->back()
-        ->with('status', 'Role not found');
-    }
-
     $role->update([
       'active' => !$role->active
-    ]);
-
-    Log::info('ROLE DELETED', [
-      'STATUS' => 'SUCCESS',
-      'ACTION' => 'Delete role',
-      'USER-AUTH' => Auth::user(),
-      'ROLE' => $role,
     ]);
 
     return redirect()->route('roles.index')

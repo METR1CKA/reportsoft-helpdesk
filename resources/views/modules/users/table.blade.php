@@ -22,7 +22,7 @@
               @method('get')
 
               <x-auth-session-status :status="session('status')" />
-              <x-input-error :messages="$errors->get('search')" />
+              <x-input-error :messages="$errors->get('error')" />
               <x-text-input
                 id="search"
                 placeholder="Buscar usuario"
