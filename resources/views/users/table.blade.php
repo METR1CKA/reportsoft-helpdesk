@@ -25,7 +25,7 @@
               <tr>
                 <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $user->username }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $user->email }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $user->role->name }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $user->role->first()->name }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $user->active ? 'Active' : 'Inactive' }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <form method="post" action="{{ route('users.destroy', $user->id) }}">

@@ -4,27 +4,29 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
+  protected $tableName = 'roles_views';
+
   /**
    * Run the migrations.
    */
   public function up(): void
   {
-    Schema::create('users', function (Blueprint $table) {
+    Schema::create($this->tableName, function (Blueprint $table) {
       $table->id();
-      $table->string('username');
-      $table->string('email')->unique();
-      $table->timestamp('email_verified_at')->nullable();
-      $table->string('phone')->nullable();
-      $table->string('password');
-      $table->rememberToken();
-      $table->boolean('active');
       $table->foreignId('role_id')
         ->references('id')
         ->on('roles')
         ->onUpdate('cascade')
         ->onDelete('cascade');
+      $table->foreignId('view_id')
+        ->references('id')
+        ->on('views')
+        ->onUpdate('cascade')
+        ->onDelete('cascade');
+      $table->boolean('active')
+        ->nullable(false)
+        ->default(true);
       $table->timestamps();
     });
   }
@@ -34,6 +36,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('users');
+    Schema::dropIfExists($this->tableName);
   }
 };

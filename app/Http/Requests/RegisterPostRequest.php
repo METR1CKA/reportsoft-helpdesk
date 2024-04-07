@@ -21,7 +21,21 @@ class RegisterPostRequest extends FormRequest
   {
     return [
       'username' => ['required', 'string', 'max:255'],
-      'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+      'email' => [
+        'required',
+        'string',
+        'lowercase',
+        'email',
+        'max:255',
+        'unique:' . User::class
+      ],
+      // 'phone' => [
+      //   'required',
+      //   'string',
+      //   'regex:/^\+\d{1,3}[- ]?\d{10}$/',
+      //   // 'phone:MX',
+      //   'unique:' . User::class
+      // ],
       'password' => [
         'required',
         'confirmed',

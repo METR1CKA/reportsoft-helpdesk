@@ -30,6 +30,13 @@
       <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
     </div>
 
+    <!-- Phone -->
+    <!-- <div class="mt-4">
+      <x-input-label for="phone" :value="__('Enter phone with country code (+52, +1, etc)')" />
+      <x-text-input id="phone" class="block mt-1 w-full" type="tel" name="phone" required autocomplete="phone" />
+      <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+    </div> -->
+
     <!-- Recaptcha V2 -->
     <div class="form-group mt-3">
       {!! NoCaptcha::renderJs() !!}

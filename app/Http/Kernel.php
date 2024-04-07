@@ -66,6 +66,6 @@ class Kernel extends HttpKernel
     'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     // Custom middlewares
     'admin.view.welcome' => \App\Http\Middleware\AdminViewWelcome::class,
-    'auth.2fa' => \App\Http\Middleware\AuthTwoFactor::class,
+    'auth-factor' => \App\Http\Middleware\AuthFactor::class,
   ];
 }

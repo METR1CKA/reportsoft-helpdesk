@@ -17,17 +17,9 @@ class AdminViewWelcome
    */
   public function handle(Request $request, Closure $next): Response
   {
-    $check = Auth::check();
-
-    if (!$check) {
-      return redirect()->route('login');
-    }
-
     $roles = Role::getRoles();
 
-    $role_id = Auth::user()->role->id;
-
-    if ($check && $role_id != $roles['ADMIN']) {
+    if (Auth::user()->role->first()->id != $roles['ADMIN']) {
       return redirect()->route('dashboard');
     }
 

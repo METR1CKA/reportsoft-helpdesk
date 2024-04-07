@@ -2,13 +2,13 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Role;
 use Closure;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class AuthTwoFactor
+class AuthFactor
 {
   /**
    * Handle an incoming request.
@@ -25,21 +25,25 @@ class AuthTwoFactor
 
     $roles = Role::getRoles();
 
-    $role_id = Auth::user()->role->id;
-
-    if ($check && $role_id == $roles['ADMIN']) {
+    if (Auth::user()->role->first()->id == $roles['ADMIN']) {
       $exists_phone = $request->user()->phone;
 
-      $two_factor = $request->user()->twoFA->code2fa;
+      $auth_factor = $request->user()->authFA;
 
-      if (!$two_factor && !$exists_phone) {
-        return redirect()->route('2fa.send-code');
+      $all_codes = $auth_factor->map(function ($authFA) {
+        return $authFA->code;
+      });
+
+      if ($all_codes->contains(null) && !$exists_phone) {
+        return redirect()->route('auth-factor.send-code');
       }
 
-      $two_factor_verified = $request->user()->twoFA->code2fa_verified;
+      $all_codes_verified = $auth_factor->map(function ($authFA) {
+        return $authFA->code_verified;
+      });
 
-      if (!$two_factor_verified) {
-        return redirect()->route('2fa.verify-code');
+      if ($all_codes_verified->contains(false)) {
+        return redirect()->route('auth-factor.verify-code');
       }
     }
 

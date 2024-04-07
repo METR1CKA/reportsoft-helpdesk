@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Exception;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
@@ -35,10 +34,10 @@ class RegisteredUserController extends Controller
    *
    * @param  \App\Http\Requests\RegisterPostRequest  $request
    * @return \Illuminate\Http\RedirectResponse
-   * 
+   *
    * @throws \Illuminate\Validation\ValidationException
    */
-  public function store(RegisterPostRequest $request) //: RedirectResponse
+  public function store(RegisterPostRequest $request): RedirectResponse
   {
     Log::info('REQUEST TO REGISTER', [
       'ACTION' => 'Register',
@@ -62,32 +61,30 @@ class RegisteredUserController extends Controller
     ]);
 
     try {
-      $users = User::all();
-
       $roles = Role::getRoles();
-
-      $role_id = $users->count() == 0 ? $roles['ADMIN'] : $roles['GENERIC'];
 
       $user = User::create([
         'username' => $data['username'],
         'email' => $data['email'],
         'password' => Hash::make($data['password']),
-        'role_id' => $role_id,
         'active' => true,
-        'phone' => null,
+        'phone' => $data['phone'] ?? null,
       ]);
-
-      if ($role_id == $roles['ADMIN']) {
-        $user->twoFA()->create([
-          'code2fa' => null,
-          'code2fa_verified' => false,
-        ]);
-      }
 
       Log::info('USER CREATED', [
         'STATUS' => 'SUCCESS',
         'ACTION' => 'Register',
         'USER' => $user,
+      ]);
+
+      DB::commit();
+
+      $user->role()->attach(id: $roles['GUEST']);
+
+      DB::commit();
+
+      $user->authFA()->create([
+        'type' => '2FA'
       ]);
 
       DB::commit();
@@ -102,7 +99,6 @@ class RegisteredUserController extends Controller
         'USER' => $request->user(),
         'MESSAGE' => $e->getMessage(),
         'LINE_CODE' => $e->getLine(),
-        'TRACE' => $e->getTraceAsString(),
         'FILE' => $e->getFile(),
       ]);
 

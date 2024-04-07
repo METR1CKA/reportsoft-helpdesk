@@ -1,9 +1,9 @@
 <x-guest-layout>
   <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-    {{ __('Hello ADMIN, please enter your phone number (with country code) for the two-factor authentication (2FA) code.') }}
+    {{ __('Hello ADMIN, please enter your phone number (with country code) for the auth-factor authentication code.') }}
   </div>
 
-  <form method="POST" action="{{ route('2fa.send-code') }}">
+  <form method="POST" action="{{ route('auth-factor.send-code') }}">
     @csrf
 
     <!-- Phone -->

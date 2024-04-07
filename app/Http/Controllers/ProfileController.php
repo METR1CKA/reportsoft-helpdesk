@@ -17,7 +17,7 @@ class ProfileController extends Controller
 {
   /**
    * Muestra la vista de actualización del perfil.
-   * 
+   *
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\View\View
    */
@@ -30,10 +30,10 @@ class ProfileController extends Controller
 
   /**
    * Actualiza el perfil del usuario.
-   * 
+   *
    * @param  \App\Http\Requests\ProfileUpdateRequest  $request
    * @return \Illuminate\Http\RedirectResponse
-   * 
+   *
    * @throws \Illuminate\Validation\ValidationException
    */
   public function update(ProfileUpdateRequest $request)
@@ -79,10 +79,10 @@ class ProfileController extends Controller
 
   /**
    * Desactiva el perfil del usuario.
-   * 
+   *
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\RedirectResponse
-   * 
+   *
    * @throws \Illuminate\Validation\ValidationException
    */
   public function destroy(Request $request): RedirectResponse

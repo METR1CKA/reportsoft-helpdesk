@@ -28,7 +28,7 @@
       <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
       <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
-      @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
+      @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && !$user->hasVerifiedEmail())
       <div>
         <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
           {{ __('Your email address is unverified.') }}
@@ -55,13 +55,13 @@
 
     <div>
       <x-input-label for="name" :value="__('Role name')" />
-      <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->role->name)" required autofocus autocomplete="name" readonly />
+      <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->role->first()->name)" required autofocus autocomplete="name" readonly />
       <x-input-error class="mt-2" :messages="$errors->get('name')" />
     </div>
 
     <div>
       <x-input-label for="description" :value="__('Role description')" />
-      <x-text-input id="description" name="description" type="text" class="mt-1 block w-full" :value="old('description', $user->role->description)" required autofocus autocomplete="description" readonly />
+      <x-text-input id="description" name="description" type="text" class="mt-1 block w-full" :value="old('description', $user->role->first()->description)" required autofocus autocomplete="description" readonly />
       <x-input-error class="mt-2" :messages="$errors->get('role')" />
       <x-input-error class="mt-2" :messages="$errors->get('g-recaptcha-response')" />
     </div>

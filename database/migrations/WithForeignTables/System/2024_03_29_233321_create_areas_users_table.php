@@ -4,22 +4,29 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
+  protected $tableName = 'areas_users';
+
   /**
    * Run the migrations.
    */
   public function up(): void
   {
-    Schema::create('twofa_users', function (Blueprint $table) {
+    Schema::create($this->tableName, function (Blueprint $table) {
       $table->id();
       $table->foreignId('user_id')
         ->references('id')
         ->on('users')
         ->onUpdate('cascade')
         ->onDelete('cascade');
-      $table->string('code2fa')->nullable();
-      $table->boolean('code2fa_verified')->default(false);
+      $table->foreignId('area_id')
+        ->references('id')
+        ->on('areas')
+        ->onUpdate('cascade')
+        ->onDelete('cascade');
+      $table->boolean('active')
+        ->nullable(false)
+        ->default(true);
       $table->timestamps();
     });
   }
@@ -29,6 +36,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('twofa_users');
+    Schema::dropIfExists($this->tableName);
   }
 };

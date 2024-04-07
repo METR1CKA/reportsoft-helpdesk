@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class TwoFA extends Model
+class AuthFA extends Model
 {
   use HasFactory;
 
@@ -15,7 +15,7 @@ class TwoFA extends Model
    *
    * @var string
    */
-  protected $table = 'twofa_users';
+  protected $table = 'auth_fa';
 
   /**
    * Los atributos que son asignables en masa.
@@ -24,19 +24,20 @@ class TwoFA extends Model
    */
   protected $fillable = [
     'user_id',
-    'code2fa',
-    'code2fa_verified',
+    'type',
+    'code',
+    'code_verified',
   ];
 
   /**
-   * Obtiene el rol asociado al usuario.
+   * Obtiene el usuario asociado.
    */
   public function user(): BelongsTo
   {
     return $this->belongsTo(
-      User::class,
-      'user_id',
-      'id'
+      related: User::class,
+      foreignKey: 'user_id',
+      ownerKey: 'id',
     );
   }
 }

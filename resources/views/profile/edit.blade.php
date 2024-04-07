@@ -19,7 +19,7 @@
         </div>
       </div>
 
-      @if(Auth::user()->role->name != 'ADMIN')
+      @if(Auth::user()->role->first()->name != 'ADMIN')
       <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
         <div class="max-w-xl">
           @include('profile.partials.delete-user-form')

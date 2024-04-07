@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Role;
 use App\Models\User;
 
 class UserPolicy
@@ -11,6 +12,8 @@ class UserPolicy
    */
   public function isValidRole(User $user): bool
   {
-    return $user->role->name == 'ADMIN';
+    $roles = Role::getRoles();
+
+    return $user->role->first()->id == $roles['ADMIN'];
   }
 }

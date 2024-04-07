@@ -16,7 +16,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware([
-  'auth', 'verified', 'auth.2fa'
+  'auth',
+  'verified',
+  'auth-factor'
 ])->group(function () {
   // Ruta principal
   Route::get('/', function () {

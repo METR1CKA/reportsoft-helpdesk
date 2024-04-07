@@ -12,9 +12,11 @@ class UserController extends Controller
 {
   public function index(): View
   {
+    $user_id = Auth::id();
+
     $this->authorize('isValidRole', Auth::user());
 
-    $users = User::all()->where('id', '!=', Auth::user()->id);
+    $users = User::with('role')->where('id', '!=', $user_id)->get();
 
     return view('users.table', [
       'users' => $users,

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\AuthFactorController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
@@ -9,7 +10,6 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\Auth\TwoFactorAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -61,19 +61,19 @@ Route::middleware('auth')->group(function () {
 
   Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
-  // 2FA authentication
-  Route::get('2fa/send-code', [TwoFactorAuthController::class, 'create'])
-    ->name('2fa.send-code');
+  // Auth Factor
+  Route::get('auth-factor/send-code', [AuthFactorController::class, 'create'])
+    ->name('auth-factor.send-code');
 
-  Route::post('2fa/send-code', [TwoFactorAuthController::class, 'store']);
+  Route::post('auth-factor/send-code', [AuthFactorController::class, 'store']);
 
-  Route::get('2fa/resend-code', [TwoFactorAuthController::class, 'resend'])
-    ->name('2fa.resend-code');
+  Route::get('auth-factor/resend-code', [AuthFactorController::class, 'resend'])
+    ->name('auth-factor.resend-code');
 
-  Route::get('2fa/verify-code', [TwoFactorAuthController::class, 'edit'])
-    ->name('2fa.verify-code');
+  Route::get('auth-factor/verify-code', [AuthFactorController::class, 'edit'])
+    ->name('auth-factor.verify-code');
 
-  Route::post('2fa/verify-code', [TwoFactorAuthController::class, 'update']);
+  Route::post('auth-factor/verify-code', [AuthFactorController::class, 'update']);
 
   // Logout
   Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])

@@ -21,7 +21,7 @@ class EmailVerificationPromptController extends Controller
    * @param  Request  $request
    * @return RedirectResponse|View
    */
-  public function __invoke(Request $request)
+  public function __invoke(Request $request): RedirectResponse|View
   {
     Log::info('SEND VIEW OR REDIRECT IF USER HAS VERIFIED EMAIL', [
       'ACTION' => 'Send view or redirect if user has verified email',

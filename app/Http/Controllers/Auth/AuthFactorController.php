@@ -13,26 +13,26 @@ use Illuminate\Http\RedirectResponse;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Hash;
 
-class TwoFactorAuthController extends Controller
+class AuthFactorController extends Controller
 {
   /**
    * Generar un código de verificación.
-   * 
+   *
    * @return string
    */
   private function generateCode(): string
   {
-    $code = rand(100000, 999999);
-
-    return strval($code);
+    return strval(
+      rand(100000, 999999)
+    );
   }
 
   /**
    * Enviar el código de verificación a través de SMS.
-   * 
+   *
    * @param  string  $phone
    * @param  string  $code
-   * 
+   *
    * @return bool
    */
   private function sendSmsCode($phone, $code)
@@ -41,7 +41,7 @@ class TwoFactorAuthController extends Controller
       'STATUS' => 'SUCCESS',
       'ACTION' => 'Send code',
       'PHONE' => $phone,
-      'CONTROLLER' => TwoFactorAuthController::class,
+      'CONTROLLER' => AuthFactorController::class,
       'METHOD' => 'sendSmsCode',
       'CODE' => $code,
     ]);
@@ -84,24 +84,10 @@ class TwoFactorAuthController extends Controller
   }
 
   /**
-   * Muestra la vista para establecer el número de teléfono.
-   * 
-   * @return RedirectResponse|View
-   */
-  public function create()
-  {
-    $roles = Role::getRoles();
-
-    return !Auth::user()->phone && Auth::user()->role_id == $roles['ADMIN']
-      ? view('auth.phone')
-      : redirect()->intended(RouteServiceProvider::HOME);
-  }
-
-  /**
    * Reenviar el código de verificación a través de SMS.
-   * 
+   *
    * @param  \Illuminate\Http\Request  $request
-   * 
+   *
    * @return \Illuminate\Http\RedirectResponse
    */
   public function resend(Request $request): RedirectResponse
@@ -109,8 +95,8 @@ class TwoFactorAuthController extends Controller
     // Generar un código de verificación
     $code = $this->generateCode();
 
-    $request->user()->twoFA()->update([
-      'code2fa' => Hash::make($code),
+    $request->user()->authFA()->update([
+      'code' => Hash::make($code),
     ]);
 
     // Enviar el código a través de SMS usando Twilio
@@ -128,10 +114,28 @@ class TwoFactorAuthController extends Controller
   }
 
   /**
+   * Muestra la vista para establecer el número de teléfono.
+   *
+   * @return RedirectResponse|View
+   */
+  public function create()
+  {
+    $roles = Role::getRoles();
+
+    $phone = Auth::user()->phone;
+
+    $role_id = Auth::user()->role->first()->id;
+
+    return !$phone && $role_id == $roles['ADMIN']
+      ? view('auth.phone')
+      : redirect()->intended(RouteServiceProvider::HOME);
+  }
+
+  /**
    * Establecer el número de teléfono y enviar el código de verificación a través de SMS.
-   * 
+   *
    * @param  \Illuminate\Http\Request  $request
-   * 
+   *
    * @return \Illuminate\Http\RedirectResponse
    */
   public function store(Request $request): RedirectResponse
@@ -149,8 +153,8 @@ class TwoFactorAuthController extends Controller
       'phone' => $request->phone,
     ]);
 
-    $request->user()->twoFA()->update([
-      'code2fa' => Hash::make($code),
+    $request->user()->authFA()->update([
+      'code' => Hash::make($code),
     ]);
 
     // Enviar el código a través de SMS usando Twilio
@@ -167,23 +171,31 @@ class TwoFactorAuthController extends Controller
 
   /**
    * Muestra la vista para verificar el código.
-   * 
+   *
    * @return RedirectResponse|View
    */
   public function edit()
   {
     $roles = Role::getRoles();
 
-    return !Auth::user()->twoFA->code2fa_verified && Auth::user()->role_id == $roles['ADMIN']
+    $code_verified = Auth::user()->authFA->map(function ($authFA) {
+      return $authFA->code_verified;
+    });
+
+    $code_verified = Auth::user()->authFA->first()->code_verified;
+
+    $role_id = Auth::user()->role->first()->id;
+
+    return !$code_verified && $role_id == $roles['ADMIN']
       ? view('auth.verify')
       : redirect()->intended(RouteServiceProvider::HOME);
   }
 
   /**
    * Validar el código de verificación.
-   * 
+   *
    * @param  \Illuminate\Http\Request  $request
-   * 
+   *
    * @return \Illuminate\Http\RedirectResponse
    */
   public function update(Request $request): RedirectResponse
@@ -194,7 +206,13 @@ class TwoFactorAuthController extends Controller
     ]);
 
     // Verificar si el código es correcto
-    $is_valid = Hash::check($request->code, $request->user()->twoFA->code2fa);
+    $is_valid = $request->user()->authFA
+      ->filter(function ($authFA) {
+        return $authFA->type == '2FA';
+      })
+      ->every(function ($authFA) use ($request) {
+        return Hash::check($request->code, $authFA->code);
+      });
 
     if (!$is_valid) {
       // El código es incorrecto, volver a mostrar el formulario de verificación
@@ -203,8 +221,8 @@ class TwoFactorAuthController extends Controller
     }
 
     // Marcar el código como verificado
-    $request->user()->twoFA()->update([
-      'code2fa_verified' => $is_valid,
+    $request->user()->authFA()->update([
+      'code_verified' => $is_valid,
     ]);
 
     // El código es correcto, autenticar al usuario

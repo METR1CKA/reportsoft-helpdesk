@@ -1,9 +1,9 @@
 <x-guest-layout>
   <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-    {{ __('Hello ADMIN, please enter the two-factor authentication (2FA) code you received via SMS.') }}
+    {{ __('Hello ADMIN, please enter the auth-factor authentication code you received via SMS.') }}
   </div>
 
-  <form method="POST" action="{{ route('2fa.verify-code') }}">
+  <form method="POST" action="{{ route('auth-factor.verify-code') }}">
     @csrf
 
     <!-- Code -->
@@ -36,8 +36,8 @@
     @endif
 
     <div class="flex items-center justify-end mt-4">
-      <a class="ms-4 underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('2fa.resend-code') }}">
-        {{ __('Resend 2FA Code') }}
+      <a class="ms-4 underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('auth-factor.resend-code') }}">
+        {{ __('Resend Auth-FA Code') }}
       </a>
 
       <x-primary-button class="ms-4">

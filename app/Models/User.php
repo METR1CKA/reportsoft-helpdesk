@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Role;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Modelo para los usuarios.
@@ -27,7 +26,6 @@ class User extends Authenticatable implements MustVerifyEmail
     'username',
     'email',
     'password',
-    'role_id',
     'active',
     'phone',
   ];
@@ -53,26 +51,27 @@ class User extends Authenticatable implements MustVerifyEmail
   ];
 
   /**
-   * Obtiene el rol asociado al usuario.
+   * Obtiene el rol del usuario.
    */
-  public function role(): BelongsTo
+  public function role(): BelongsToMany
   {
-    return $this->belongsTo(
-      Role::class,
-      'role_id',
-      'id',
+    return $this->belongsToMany(
+      related: Role::class,
+      table: 'users_roles',
+      foreignPivotKey: 'user_id',
+      relatedPivotKey: 'role_id',
     );
   }
 
   /**
-   * Obtiene el código de autenticación de dos factores asociado al usuario.
+   * Obtiene el factor de autenticación asociado al usuario.
    */
-  public function twoFA(): HasOne
+  public function authFA(): HasMany
   {
-    return $this->hasOne(
-      TwoFA::class,
-      'user_id',
-      'id'
+    return $this->hasMany(
+      related: AuthFA::class,
+      foreignKey: 'user_id',
+      localKey: 'id',
     );
   }
 }

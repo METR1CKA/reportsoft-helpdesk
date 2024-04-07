@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Modelo para los roles.
@@ -23,17 +22,39 @@ class Role extends Model
   protected $fillable = [
     'name',
     'description',
+    'active'
   ];
+
+  /**
+   * Indica si el modelo debe tener estampas de tiempo.
+   *
+   * @var bool
+   */
+  public $timestamps = false;
 
   /**
    * Obtiene los usuarios asociados al rol.
    */
-  public function users(): HasMany
+  public function users(): BelongsToMany
   {
-    return $this->hasMany(
-      User::class,
-      'role_id',
-      'id'
+    return $this->belongsToMany(
+      related: User::class,
+      table: 'users_roles',
+      foreignPivotKey: 'role_id',
+      relatedPivotKey: 'user_id',
+    );
+  }
+
+  /**
+   * Obtiene las vistas asociados al rol.
+   */
+  public function views(): BelongsToMany
+  {
+    return $this->belongsToMany(
+      related: View::class,
+      table: 'roles_views',
+      foreignPivotKey: 'role_id',
+      relatedPivotKey: 'view_id',
     );
   }
 
