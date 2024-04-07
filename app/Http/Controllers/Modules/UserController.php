@@ -174,8 +174,7 @@ class UserController extends Controller
 
     $user = User::where('id', $id)->with('role')->first();
 
-
-    if (!$user || !$user->active) {
+    if (!$user->active) {
       return redirect()
         ->back()
         ->with('status', 'Cannot edit user, it is deactivated');
@@ -197,12 +196,6 @@ class UserController extends Controller
     $this->authorize('isValidRole', Auth::user());
 
     $user = User::find($id);
-
-    if (!$user || !$user->active) {
-      return redirect()
-        ->back()
-        ->withErrors(['role_id' => 'User not found']);
-    }
 
     $data = $request->validated();
 
@@ -258,17 +251,11 @@ class UserController extends Controller
 
     $user = User::find($id);
 
-    if (!$user) {
-      return redirect()
-        ->back()
-        ->withErrors(['error' => 'User not found']);
-    }
-
     $user->update([
       'active' => !$user->active
     ]);
 
     return redirect()->route('users.index')
-      ->with('status', $user->active ? 'User activated' : 'User deactivated');
+      ->with('status', 'User ' . ($user->active ? 'activated' : 'deactivated'));
   }
 }
