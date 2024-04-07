@@ -7,7 +7,6 @@
         <div class="shrink-0 flex items-center">
           <a href="{{ route('/') }}">
             <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
-            <!-- <img src="{{ asset('img/logo.png') }}" alt="Logo" class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200"> -->
           </a>
         </div>
 
@@ -22,6 +21,36 @@
         <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
           <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
             {{ __('Users') }}
+          </x-nav-link>
+        </div>
+
+        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+          <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.index')">
+            {{ __('Roles') }}
+          </x-nav-link>
+        </div>
+
+        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+          <x-nav-link :href="route('teams.index')" :active="request()->routeIs('teams.index')">
+            {{ __('Teams') }}
+          </x-nav-link>
+        </div>
+
+        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+          <x-nav-link :href="route('areas.index')" :active="request()->routeIs('areas.index')">
+            {{ __('Areas') }}
+          </x-nav-link>
+        </div>
+
+        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+          <x-nav-link :href="route('report_statuses.index')" :active="request()->routeIs('report_statuses.index')">
+            {{ __('Report Statuses') }}
+          </x-nav-link>
+        </div>
+
+        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+          <x-nav-link :href="route('projects.index')" :active="request()->routeIs('projects.index')">
+            {{ __('Projects') }}
           </x-nav-link>
         </div>
 

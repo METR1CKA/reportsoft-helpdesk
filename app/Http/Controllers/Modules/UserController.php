@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Modules;
 
 use App\Http\Requests\Users\CreateRequest;
 use App\Http\Requests\Users\UpdateRequest;
@@ -15,6 +15,7 @@ use Illuminate\View\View;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
@@ -173,9 +174,11 @@ class UserController extends Controller
 
     $user = User::where('id', $id)->with('role')->first();
 
+
     if (!$user || !$user->active) {
-      return view('modules.users.edit')
-        ->with('status', 'User not found');
+      return redirect()
+        ->back()
+        ->with('status', 'Cannot edit user, it is deactivated');
     }
 
     $roles = Role::getRoles();
@@ -198,7 +201,7 @@ class UserController extends Controller
     if (!$user || !$user->active) {
       return redirect()
         ->back()
-        ->with('status', 'User not found');
+        ->withErrors(['role_id' => 'User not found']);
     }
 
     $data = $request->validated();
@@ -208,7 +211,7 @@ class UserController extends Controller
     if (!$role) {
       return redirect()
         ->back()
-        ->with('status', 'Role not found');
+        ->withErrors(['role_id' => 'Role not found']);
     }
 
     DB::beginTransaction();
@@ -239,7 +242,7 @@ class UserController extends Controller
 
       return redirect()
         ->back()
-        ->with('status', 'There was an error updating the user.');
+        ->withErrors(['role_id' => 'There was an error updating the user.']);
     }
 
     return redirect()->route('users.index')
@@ -251,26 +254,11 @@ class UserController extends Controller
    */
   public function destroy($id): RedirectResponse
   {
-    Log::info('REQUEST TO DELETE USER', [
-      'ACTION' => 'Delete user',
-      'CONTROLLER' => UserController::class,
-      'USER-AUTH' => Auth::user(),
-      'ID' => $id,
-      'METHOD' => 'destroy',
-    ]);
-
     $this->authorize('isValidRole', Auth::user());
 
     $user = User::find($id);
 
     if (!$user) {
-      Log::alert('USER NOT FOUND', [
-        'STATUS' => 'ERROR',
-        'ACTION' => 'Delete user',
-        'USER-AUTH' => Auth::user(),
-        'USER' => $user ?? 'NOT FOUND',
-      ]);
-
       return redirect()
         ->back()
         ->withErrors(['error' => 'User not found']);
@@ -280,13 +268,7 @@ class UserController extends Controller
       'active' => !$user->active
     ]);
 
-    Log::info('USER DELETED', [
-      'STATUS' => 'SUCCESS',
-      'ACTION' => 'Delete user',
-      'USER-AUTH' => Auth::user(),
-      'USER' => $user,
-    ]);
-
-    return redirect()->route('users.index');
+    return redirect()->route('users.index')
+      ->with('status', $user->active ? 'User activated' : 'User deactivated');
   }
 }

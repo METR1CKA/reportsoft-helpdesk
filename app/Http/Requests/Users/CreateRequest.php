@@ -30,7 +30,6 @@ class CreateRequest extends FormRequest
         'required',
         'string',
         'regex:/^\+\d{1,3}[- ]?\d{10}$/',
-        // 'phone:MX',
         'unique:' . User::class
       ],
       'role_id' => [
