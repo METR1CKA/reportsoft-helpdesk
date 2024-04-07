@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\AuthFactorController;
+use App\Http\Controllers\Auth\SendCodeFAController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
@@ -10,9 +11,12 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('guest')->group(function () {
+Route::middleware([
+  'guest'
+])->group(function () {
   // Register
   Route::get('register', [RegisteredUserController::class, 'create'])
     ->name('register');
@@ -40,7 +44,9 @@ Route::middleware('guest')->group(function () {
     ->name('password.store');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware([
+  'auth'
+])->group(function () {
   // Email verification
   Route::get('verify-email', EmailVerificationPromptController::class)
     ->name('verification.notice');
@@ -62,26 +68,33 @@ Route::middleware('auth')->group(function () {
   Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
   // Auth Factor
+  Route::get('auth-factor/send-code', SendCodeFAController::class)
+    ->name('auth-factor.send-code');
 
-  // Send code to email for 2FA verification
-  Route::get('2FA/send-code', [AuthFactorController::class, 'viewSendCode2FA'])
-    ->name('2FA.send-code');
+  Route::get('auth-factor/verify-code', [AuthFactorController::class, 'viewVerifyCodeFA'])
+    ->name('auth-factor.verify-code');
 
-  Route::post('2FA/send-code', [AuthFactorController::class, 'sendCode2FA']);
+  Route::post('auth-factor/verify-code', [AuthFactorController::class, 'verifyCodeFA']);
 
-  // verify 2FA code
-  Route::get('2FA/verify-2FA-code', [AuthFactorController::class, 'viewVerifyCode2FA'])
-    ->name('2FA.verify-code');
-
-  Route::post('2FA/verify-2FA-code', [AuthFactorController::class, 'verifyCode2FA']);
-
-  // verify 3FA code (only ADMIN)
-  Route::get('3FA/verify-3FA-code', [AuthFactorController::class, 'viewVerifyCode3FA'])
-    ->name('3FA.verify-code');
-
-  Route::post('3FA/verify-3FA-code', [AuthFactorController::class, 'verifyCode3FA']);
+  Route::get('auth-factor/resend-code', [AuthFactorController::class, 'resendCodeFA'])
+    ->name('auth-factor.resend-code');
 
   // Logout
   Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
+
+  Route::middleware([
+    'verified',
+    'auth-factor'
+  ])->group(function () {
+    // Rutas de perfil
+    Route::get('/profile', [ProfileController::class, 'edit'])
+      ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+      ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+      ->name('profile.destroy');
+  });
 });

@@ -16,4 +16,6 @@
           Welcome {{ Auth::user()->username }}!
         </div>
       </div>
+    </div>
+  </div>
 </x-app-layout>

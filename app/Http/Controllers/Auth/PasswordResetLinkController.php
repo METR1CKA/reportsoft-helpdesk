@@ -4,10 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Rules\Recaptcha;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
@@ -32,7 +30,7 @@ class PasswordResetLinkController extends Controller
    *
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\RedirectResponse
-   * 
+   *
    * @throws \Illuminate\Validation\ValidationException
    */
   public function store(Request $request): RedirectResponse
@@ -50,7 +48,7 @@ class PasswordResetLinkController extends Controller
 
     $request->validate([
       'email' => ['required', 'email'],
-      'g-recaptcha-response' => ['required', new Recaptcha],
+      'g-recaptcha-response' => ['required', 'captcha'],
     ]);
 
     Log::info('VALIDATION TO SEND RESET PASSWORD LINK PASSED', [
@@ -80,24 +78,22 @@ class PasswordResetLinkController extends Controller
       $request->only('email')
     );
 
+    $cond = $status == Password::RESET_LINK_SENT;
+
+    $msg = $cond ? 'SUCCESS' : 'FAILED';
+
     $data = [
-      'STATUS' => $status == Password::PASSWORD_RESET ? 'SUCCESS' : 'FAILED',
+      'STATUS' => $msg,
       'ACTION' => 'Send reset password link',
       'USER' => $request->user(),
       'PASSWORD-STATUS' => $status,
     ];
 
-    $msg = "PASSWORD RESET" . $status == Password::PASSWORD_RESET
-      ? 'COMPLETED'
-      : 'FAILED';
+    $cond ? Log::info($msg, $data) : Log::alert($msg, $data);
 
-    $status == Password::PASSWORD_RESET
-      ? Log::info($msg, $data)
-      : Log::alert($msg, $data);
-
-    return $status == Password::RESET_LINK_SENT
+    return $cond
       ? back()->with('status', __($status))
       : back()->withInput($request->only('email'))
-      ->withErrors(['email' => __($status)]);
+        ->withErrors(['email' => __($status)]);
   }
 }

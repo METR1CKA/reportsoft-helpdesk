@@ -12,9 +12,13 @@ class GenerateCodes
    */
   public static function generateNumberCode(int $length = 6): string
   {
-    $min = pow(10, $length - 1);
-    $max = pow(10, $length) - 1;
-    return strval(rand($min, $max));
+    $code = '';
+
+    for ($i = 0; $i < $length; $i++) {
+      $code .= rand(0, 9);
+    }
+
+    return $code;
   }
 
   /**
@@ -25,10 +29,12 @@ class GenerateCodes
    */
   public static function generateStringCode(int $length = 6): string
   {
+    $letters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
     return substr(
-      str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"),
-      0,
-      $length
+      string: str_shuffle($letters),
+      offset: 0,
+      length: $length
     );
   }
 }

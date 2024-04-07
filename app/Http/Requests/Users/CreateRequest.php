@@ -1,18 +1,16 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Users;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Password;
 use App\Models\User;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use App\Rules\Recaptcha;
 
-/**
- * Request para registrar un usuario.
- */
-class RegisterPostRequest extends FormRequest
+class CreateRequest extends FormRequest
 {
   /**
-   * Obtener las reglas de validación que se aplican a la solicitud.
+   * Get the validation rules that apply to the request.
    *
    * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
    */
@@ -35,18 +33,12 @@ class RegisterPostRequest extends FormRequest
         // 'phone:MX',
         'unique:' . User::class
       ],
-      'password' => [
+      'role_id' => [
         'required',
-        'confirmed',
-        Password::min(8)
-          ->max(12)
-          ->mixedCase()
-          ->letters()
-          ->numbers()
-          ->symbols()
-          ->uncompromised(5),
+        'integer',
+        Rule::exists('roles', 'id'),
       ],
-      'g-recaptcha-response' => ['required', 'captcha'],
+      'g-recaptcha-response' => ['required', new Recaptcha],
     ];
   }
 }

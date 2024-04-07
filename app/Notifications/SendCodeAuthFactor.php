@@ -3,10 +3,8 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-// use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\User;
 
 class SendCodeAuthFactor extends Notification
 {
@@ -18,7 +16,7 @@ class SendCodeAuthFactor extends Notification
   /**
    * Create a new notification instance.
    */
-  public function __construct(User $user, string $code)
+  public function __construct(string $user, string $code)
   {
     $this->code = $code;
     $this->user = $user;
@@ -41,13 +39,13 @@ class SendCodeAuthFactor extends Notification
   {
     return (new MailMessage)
       ->subject('2FA Code verification')
-      ->greeting('Hello ' . $this->user->username . '!')
+      ->greeting('Hello ' . $this->user . '!')
       ->line('Your code is:')
       ->line($this->code)
       ->line('Enter the code in the application to verify your account.')
       ->line('If you did not request a code, you can ignore this email.')
       ->line('Link to verify the code:')
-      ->action('Verify code', route('2FA.verify-code'))
+      ->action('Verify code', route('auth-factor.verify-code'))
       ->line('Thank you for using our application!');
   }
 

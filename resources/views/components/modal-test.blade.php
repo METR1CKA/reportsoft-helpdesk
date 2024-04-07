@@ -1,5 +1,11 @@
-<x-guest-layout>
-  <form method="POST" action="{{ route('register') }}">
+<div id="registerModal" class="modal bg-white dark:bg-gray-900" style="display: none;position: fixed;z-index: 1;left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.4); ">
+    <div class="modal-content bg-white dark:bg-gray-800" style="margin: 15% auto;padding: 20px;border: 1px solid #888;width: 80%;">
+      <span class="close" style="color: #aaa;float: right;font-size: 28px;font-weight: bold;"
+      onmouseover="this.style.color=black"
+      onmouseout="this.style.color='#aaa'"
+       >&times;</span>
+      <h2 class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">Register</h2>
+      <form method="POST" action="{{ route('register') }}">
     @csrf
 
     <!-- UserName -->
@@ -38,10 +44,10 @@
     </div>
 
     <!-- Recaptcha V2 -->
-    <div class="form-group mt-3">
+    <!-- <div class="form-group mt-3">
       {!! NoCaptcha::renderJs() !!}
       {!! NoCaptcha::display(['data-theme' => 'dark']) !!}
-    </div>
+    </div> -->
 
     @if ($errors->has('g-recaptcha-response'))
     <div class="form-group mt-3">
@@ -52,13 +58,39 @@
     @endif
 
     <div class="flex items-center justify-end mt-4">
-      <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-        {{ __('Already registered?') }}
-      </a>
-
       <x-primary-button class="ms-4">
         {{ __('Register') }}
       </x-primary-button>
     </div>
   </form>
-</x-guest-layout>
+    </div>
+</div>
+
+
+<script>
+    // Get the modal
+    var modal = document.getElementById("registerModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("registerLink");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal
+    btn.onclick = function() {
+      modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+</script>

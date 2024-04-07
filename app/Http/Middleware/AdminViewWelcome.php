@@ -19,7 +19,11 @@ class AdminViewWelcome
   {
     $roles = Role::getRoles();
 
-    if (Auth::user()->role->first()->id != $roles['ADMIN']) {
+    $is_admin = Auth::user()->role()
+      ->where('roles.id', $roles['ADMIN'])
+      ->exists();
+
+    if (!$is_admin) {
       return redirect()->route('dashboard');
     }
 

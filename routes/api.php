@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\ApiAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +14,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-  return $request->user();
+Route::get('v1/check-net', function () {
+  return response()->json(
+    data: [
+      'message' => 'API is working!',
+      'data' => null,
+    ],
+    status: 200
+  );
 });
+
+Route::middleware([
+  'api'
+])
+  ->prefix('v1/auth')
+  ->group(function () {
+    Route::post('login', [ApiAuthController::class, 'login']);
+
+    Route::middleware([
+      'auth:sanctum'
+    ])
+      ->group(function () {
+        Route::post('logout', [ApiAuthController::class, 'logout']);
+        Route::post('verify-code', [ApiAuthController::class, 'verifyCode']);
+      });
+  });

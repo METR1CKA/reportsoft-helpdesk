@@ -1,8 +1,8 @@
   <x-guest-layout>
+    <x-input-label class="text-center"> {{ env('SERVER') }} </x-input-label>
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <x-input-label class="text-center"> {{ env('SERVER') }} </x-input-label>
 
     <form method="POST" action="{{ route('login') }}">
       @csrf
@@ -36,7 +36,10 @@
       </div>
 
       @if ($errors->has('g-recaptcha-response'))
-      <div class="form-group mt-3">
+      <div
+        x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 5000)"
+        class="form-group mt-3"
+        >
         <span class="help-block">
           <strong class="text-red-500">{{ $errors->first('g-recaptcha-response') }}</strong>
         </span>

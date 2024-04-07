@@ -80,12 +80,6 @@ class AuthenticatedSessionController extends Controller
       'METHOD' => 'destroy',
     ]);
 
-    $request->session()->forget('auth.password_confirmed_at');
-
-    // DB::table('sessions')
-    //   ->where('user_id', Auth::id())
-    //   ->delete();
-
     Auth::guard('web')->logout();
 
     $request->session()->invalidate();

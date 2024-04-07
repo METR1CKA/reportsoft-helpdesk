@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Models\User;
-use App\Rules\Recaptcha;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +17,7 @@ class LoginRequest extends FormRequest
 {
   /**
    * Determina si el usuario está autorizado para hacer esta solicitud.
-   * 
+   *
    * @return bool
    */
   public function authorize(): bool

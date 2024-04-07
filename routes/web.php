@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,9 +21,8 @@ Route::middleware([
 ])->group(function () {
   // Ruta principal
   Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('dashboard');
   })
-    ->middleware(['admin.view.welcome'])
     ->name('/');
 
   // Ruta de dashboard
@@ -32,25 +30,7 @@ Route::middleware([
     return view('dashboard');
   })
     ->name('dashboard');
-
-  // Rutas de usuarios
-  Route::middleware('password.confirm')->group(function () {
-    Route::get('/users', [UserController::class, 'index'])
-      ->name('users.index');
-
-    Route::delete('/users/{user}', [UserController::class, 'destroy'])
-      ->name('users.destroy');
-  });
-
-  // Rutas de perfil
-  Route::get('/profile', [ProfileController::class, 'edit'])
-    ->name('profile.edit');
-
-  Route::patch('/profile', [ProfileController::class, 'update'])
-    ->name('profile.update');
-
-  Route::delete('/profile', [ProfileController::class, 'destroy'])
-    ->name('profile.destroy');
 });
 
 require __DIR__ . '/auth.php';
+require __DIR__ . '/modules.php';

@@ -14,6 +14,8 @@ class UserPolicy
   {
     $roles = Role::getRoles();
 
-    return $user->role->first()->id == $roles['ADMIN'];
+    return $user->role()
+      ->where('roles.id', $roles['ADMIN'])
+      ->exists();
   }
 }

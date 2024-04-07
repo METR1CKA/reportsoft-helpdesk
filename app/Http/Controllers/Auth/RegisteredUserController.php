@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterPostRequest;
 use App\Models\Role;
 use App\Models\User;
-use App\Providers\RouteServiceProvider;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
@@ -68,7 +67,7 @@ class RegisteredUserController extends Controller
         'email' => $data['email'],
         'password' => Hash::make($data['password']),
         'active' => true,
-        'phone' => $data['phone'] ?? null,
+        'phone' => $data['phone'],
       ]);
 
       Log::info('USER CREATED', [
@@ -109,6 +108,7 @@ class RegisteredUserController extends Controller
         ]);
     }
 
-    return redirect(RouteServiceProvider::HOME);
+    return redirect()->route('login')
+      ->with('status', __('User created successfully.'));
   }
 }
