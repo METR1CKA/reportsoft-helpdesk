@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\DB;
 
 class AreasController extends Controller
 {
-
   public function index(): View
   {
     $this->authorize('isValidRole', Auth::user());
@@ -91,7 +90,7 @@ class AreasController extends Controller
 
       return redirect()
         ->back()
-        ->withErrors(['description' => 'There was an error creating the user.']);
+        ->withErrors(['description' => 'There was an error creating the area.']);
     }
 
     return redirect()->route('areas.index')
@@ -109,8 +108,8 @@ class AreasController extends Controller
 
     if (!$area || !$area->active) {
       return redirect()
-      ->back()
-      ->with('status', 'Cannot edit area, it is deactivated');
+        ->back()
+        ->with('status', 'Cannot edit area, it is deactivated');
     }
 
     return view('modules.areas.edit', [
@@ -125,9 +124,9 @@ class AreasController extends Controller
   {
     $this->authorize('isValidRole', Auth::user());
 
-    $Area = Area::find($id);
+    $area = Area::find($id);
 
-    if (!$Area || !$Area->active) {
+    if (!$area->active) {
       return redirect()
         ->back()
         ->withErrors(['description' => 'Area not found']);
@@ -138,7 +137,7 @@ class AreasController extends Controller
     DB::beginTransaction();
 
     try {
-      $Area->update([
+      $area->update([
         'name' => $data['name'],
         'description' => $data['description'],
       ]);
@@ -170,45 +169,15 @@ class AreasController extends Controller
    */
   public function destroy($id): RedirectResponse
   {
-    Log::info('REQUEST TO DELETE AREA', [
-      'ACTION' => 'Delete area',
-      'CONTROLLER' => AreasController::class,
-      'USER-AUTH' => Auth::user(),
-      'ID' => $id,
-      'METHOD' => 'destroy',
-    ]);
-
     $this->authorize('isValidRole', Auth::user());
 
-    $Area = Area::find($id);
+    $area = Area::find($id);
 
-    if (!$Area) {
-      Log::alert('AREA NOT FOUND', [
-        'STATUS' => 'ERROR',
-        'ACTION' => 'Delete area',
-        'USER-AUTH' => Auth::user(),
-        'AREA' => $Area ?? 'NOT FOUND',
-      ]);
-
-      return redirect()
-        ->back()
-        ->withErrors(['description' => 'Area not found']);
-    }
-
-    $Area->update([
-      'active' => !$Area->active
-    ]);
-
-    Log::info('AREA DELETED', [
-      'STATUS' => 'SUCCESS',
-      'ACTION' => 'Delete area',
-      'USER-AUTH' => Auth::user(),
-      'AREA' => $Area,
+    $area->update([
+      'active' => !$area->active
     ]);
 
     return redirect()->route('areas.index')
-    ->with('status', $Area->active ? 'Area activated' : 'Area deactivated');
+      ->with('status', $area->active ? 'Area activated' : 'Area deactivated');
   }
-
 }
-

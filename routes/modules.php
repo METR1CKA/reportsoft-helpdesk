@@ -6,6 +6,8 @@ use App\Http\Controllers\Modules\AreasController;
 use App\Http\Controllers\Modules\ProjectsController;
 use App\Http\Controllers\Modules\ReportStatusesController;
 use App\Http\Controllers\Modules\TeamsController;
+use App\Http\Controllers\Modules\EnterprisesController;
+use App\Http\Controllers\Modules\ReportsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([
@@ -13,56 +15,56 @@ Route::middleware([
   'verified',
   'auth-factor'
 ])->group(function () {
-  // Rutas de usuarios
+  // Password confirmation
   Route::middleware([
-    // 'password.confirm'
-  ])->prefix('users')->group(function () {
-    Route::get('/', [UserController::class, 'index'])
-      ->name('users.index');
+    'password.confirm'
+  ])->group(function () {
+    // Rutas de usuarios
+    Route::prefix('users')->group(function () {
+      Route::get('/', [UserController::class, 'index'])
+        ->name('users.index');
 
-    Route::get('/search', [UserController::class, 'show'])
-      ->name('users.show');
+      Route::get('/search', [UserController::class, 'show'])
+        ->name('users.show');
 
-    Route::get('/create', [UserController::class, 'create'])
-      ->name('users.create');
+      Route::get('/create', [UserController::class, 'create'])
+        ->name('users.create');
 
-    Route::post('/create', [UserController::class, 'store']);
+      Route::post('/create', [UserController::class, 'store']);
 
-    Route::get('/update/{id}', [UserController::class, 'edit'])
-      ->name('users.update');
+      Route::get('/update/{id}', [UserController::class, 'edit'])
+        ->name('users.update');
 
-    Route::put('/update/{id}', [UserController::class, 'update']);
+      Route::put('/update/{id}', [UserController::class, 'update']);
 
-    Route::delete('/{id}', [UserController::class, 'destroy'])
-      ->name('users.delete');
+      Route::delete('/{id}', [UserController::class, 'destroy'])
+        ->name('users.delete');
+    });
+
+    // Rutas de roles
+    Route::prefix('roles')->group(function () {
+      Route::get('/', [RolesController::class, 'index'])
+        ->name('roles.index');
+
+      Route::get('/search', [RolesController::class, 'show'])
+        ->name('roles.show');
+
+      Route::get('/create', [RolesController::class, 'create'])
+        ->name('roles.create');
+
+      Route::post('/create', [RolesController::class, 'store']);
+
+      Route::get('/update/{id}', [RolesController::class, 'edit'])
+        ->name('roles.update');
+
+      Route::put('/update/{id}', [RolesController::class, 'update']);
+
+      Route::delete('/{id}', [RolesController::class, 'destroy'])
+        ->name('roles.delete');
+    });
   });
 
-  Route::middleware([
-    // 'password.confirm'
-  ])->prefix('roles')->group(function () {
-    Route::get('/', [RolesController::class, 'index'])
-      ->name('roles.index');
-
-    Route::get('/search', [RolesController::class, 'show'])
-      ->name('roles.show');
-
-    Route::get('/create', [RolesController::class, 'create'])
-      ->name('roles.create');
-
-    Route::post('/create', [RolesController::class, 'store']);
-
-    Route::get('/update/{id}', [RolesController::class, 'edit'])
-      ->name('roles.update');
-
-    Route::put('/update/{id}', [RolesController::class, 'update']);
-
-    Route::delete('/{id}', [RolesController::class, 'destroy'])
-      ->name('roles.delete');
-  });
-
-  Route::middleware([
-    // 'password.confirm'
-  ])->prefix('teams')->group(function () {
+  Route::prefix('teams')->group(function () {
     Route::get('/', [TeamsController::class, 'index'])
       ->name('teams.index');
 
@@ -83,9 +85,7 @@ Route::middleware([
       ->name('teams.delete');
   });
 
-  Route::middleware([
-    // 'password.confirm'
-  ])->prefix('areas')->group(function () {
+  Route::prefix('areas')->group(function () {
     Route::get('/', [AreasController::class, 'index'])
       ->name('areas.index');
 
@@ -106,9 +106,7 @@ Route::middleware([
       ->name('areas.delete');
   });
 
-  Route::middleware([
-    // 'password.confirm'
-  ])->prefix('report/statuses')->group(function () {
+  Route::prefix('report/statuses')->group(function () {
     Route::get('/', [ReportStatusesController::class, 'index'])
       ->name('report_statuses.index');
 
@@ -129,9 +127,7 @@ Route::middleware([
       ->name('report_statuses.delete');
   });
 
-  Route::middleware([
-    // 'password.confirm'
-  ])->prefix('projects')->group(function () {
+  Route::prefix('projects')->group(function () {
     Route::get('/', [ProjectsController::class, 'index'])
       ->name('projects.index');
 
@@ -150,5 +146,47 @@ Route::middleware([
 
     Route::delete('/{id}', [ProjectsController::class, 'destroy'])
       ->name('projects.delete');
+  });
+
+  Route::prefix('enterprises')->group(function () {
+    Route::get('/', [EnterprisesController::class, 'index'])
+      ->name('enterprises.index');
+
+    Route::get('/search', [EnterprisesController::class, 'show'])
+      ->name('enterprises.show');
+
+    Route::get('/create', [EnterprisesController::class, 'create'])
+      ->name('enterprises.create');
+
+    Route::post('/create', [EnterprisesController::class, 'store']);
+
+    Route::get('/update/{id}', [EnterprisesController::class, 'edit'])
+      ->name('enterprises.update');
+
+    Route::put('/update/{id}', [EnterprisesController::class, 'update']);
+
+    Route::delete('/{id}', [EnterprisesController::class, 'destroy'])
+      ->name('enterprises.delete');
+  });
+
+  Route::prefix('reports')->group(function () {
+    Route::get('/', [ReportsController::class, 'index'])
+      ->name('reports.index');
+
+    Route::get('/search', [ReportsController::class, 'show'])
+      ->name('reports.show');
+
+    Route::get('/create', [ReportsController::class, 'create'])
+      ->name('reports.create');
+
+    Route::post('/create', [ReportsController::class, 'store']);
+
+    Route::get('/update/{id}', [ReportsController::class, 'edit'])
+      ->name('reports.update');
+
+    Route::put('/update/{id}', [ReportsController::class, 'update']);
+
+    Route::delete('/{id}', [ReportsController::class, 'destroy'])
+      ->name('reports.delete');
   });
 });
