@@ -5,6 +5,7 @@ namespace App\Http\Requests\Enterprises;
 use App\Models\Enterprise;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Rules\Recaptcha;
 
 class UpdateRequest extends FormRequest
 {
@@ -47,6 +48,7 @@ class UpdateRequest extends FormRequest
         'max:200',
         Rule::unique(Enterprise::class)->ignore($this->id, 'id')
       ],
+      'g-recaptcha-response' => ['required', new Recaptcha],
     ];
   }
 }

@@ -17,7 +17,7 @@
           </x-nav-link>
         </div>
 
-        @can('isValidRole', Auth::user())
+        @can('is-admin')
         <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
           <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
             {{ __('Users') }}
@@ -30,6 +30,14 @@
           </x-nav-link>
         </div>
 
+        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+          <x-nav-link href="log-viewer">
+            {{ __('Log viewer') }}
+          </x-nav-link>
+        </div>
+        @endcan
+
+        @can('is-admin-coordinator')
         <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
           <x-nav-link :href="route('teams.index')" :active="request()->routeIs('teams.index')">
             {{ __('Teams') }}
@@ -59,16 +67,12 @@
             {{ __('Enterprises') }}
           </x-nav-link>
         </div>
+        @endcan
 
+        @can('is-admin-coordinator-guest')
         <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
           <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.index')">
             {{ __('Reports') }}
-          </x-nav-link>
-        </div>
-
-        <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-          <x-nav-link href="log-viewer">
-            {{ __('Log viewer') }}
           </x-nav-link>
         </div>
         @endcan

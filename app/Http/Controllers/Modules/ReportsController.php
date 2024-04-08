@@ -28,6 +28,7 @@ class ReportsController extends Controller
 
     $reports = Report::with('user', 'area', 'enterprise', 'project', 'reportStatus')
       ->orderBy('id', 'desc')
+      ->where('active', true)
       ->get();
 
     return view('modules.reports.table', [

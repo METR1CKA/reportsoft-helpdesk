@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-// use App\Models\Role;
-// use Illuminate\Support\Facades\Gate;
+use App\Models\Role;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use App\Policies\UserPolicy;
 use App\Models\User;
@@ -24,20 +24,51 @@ class AuthServiceProvider extends ServiceProvider
    */
   public function boot(): void
   {
-    // $rv = Role::with('views')->get();
+    // ADMIN
+    // - USERS crud
+    // - ROLES crud
+    // - LOG VIEWER xxxx
+    // - TEAMS crud
+    // - AREAS crud
+    // - REPORT STATUS crud
+    // - PROJECTS crud
+    // - ENTERPRISES crud
+    // - REPORTS crud
 
-    // foreach ($rv as $role) {
-    //   foreach ($role->views as $view) {
-    //     Gate::define($view->name, function (User $user) use ($role) {
-    //       return $user->role->id == $role->id;
-    //     });
-    //   }
-    // }
+    // COORDINATOR
+    // - TEAMS crud
+    // - AREAS cru
+    // - REPORT STATUS cru
+    // - PROJECTS crud
+    // - ENTERPRISES cru
+    // - REPORTS crud
 
-    // Gate::define('', function (User $user) {
-    //   $roles = Role::getRoles();
+    // GUEST
+    // - REPORTS r
 
-    //   return $user->role->id == $roles['ADMIN'];
-    // });
+    Gate::define('is-admin', function (User $user) {
+      return $this->checkRole($user, ['ADMIN']);
+    });
+
+    Gate::define('is-admin-coordinator', function (User $user) {
+      return $this->checkRole($user, ['ADMIN', 'COORDINATOR']);
+    });
+
+    Gate::define('is-admin-coordinator-guest', function (User $user) {
+      return $this->checkRole($user, ['ADMIN', 'COORDINATOR', 'GUEST']);
+    });
+  }
+
+  private function checkRole(User $user, array $roles)
+  {
+    $roleIds = Role::getRoles();
+
+    foreach ($roles as $role) {
+      if ($user->role()->where('roles.id', $roleIds[$role])->exists()) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

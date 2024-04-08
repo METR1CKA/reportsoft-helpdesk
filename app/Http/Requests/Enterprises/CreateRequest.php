@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Enterprises;
 
 use App\Models\Enterprise;
+use App\Rules\Recaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateRequest extends FormRequest
@@ -46,6 +47,7 @@ class CreateRequest extends FormRequest
         'max:200',
         'unique:' . Enterprise::class
       ],
+      'g-recaptcha-response' => ['required', new Recaptcha],
     ];
   }
 }

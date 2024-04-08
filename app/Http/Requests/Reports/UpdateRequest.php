@@ -4,6 +4,7 @@ namespace App\Http\Requests\Reports;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Rules\Recaptcha;
 
 class UpdateRequest extends FormRequest
 {
@@ -53,6 +54,7 @@ class UpdateRequest extends FormRequest
         'required',
         'string'
       ],
+      'g-recaptcha-response' => ['required', new Recaptcha],
     ];
   }
 }
