@@ -1,5 +1,15 @@
-## <small>2.18.39 (2024-04-08)</small>
+## <small>2.18.45 (2024-04-08)</small>
 
+- feat(v2.18.42): navigation gates ([af565e2](https://github.com/METR1CKA/reportsoft-helpdesk/commit/af565e2))
+- feat(v2.18.43): gates in reports ([33d6a78](https://github.com/METR1CKA/reportsoft-helpdesk/commit/33d6a78))
+- feat(v2.18.44): reports filtered ([0baba72](https://github.com/METR1CKA/reportsoft-helpdesk/commit/0baba72))
+- update: some views right now have their rules of who can see him, update, create and delete ([528db37](https://github.com/METR1CKA/reportsoft-helpdesk/commit/528db37))
+- fix(v2.18.41): table ([05fadb0](https://github.com/METR1CKA/reportsoft-helpdesk/commit/05fadb0))
+
+## <small>2.18.40 (2024-04-08)</small>
+
+- chore: changelogs ([df5e06c](https://github.com/METR1CKA/reportsoft-helpdesk/commit/df5e06c))
+- chore(v2.18.40): changelog ([bfea1b9](https://github.com/METR1CKA/reportsoft-helpdesk/commit/bfea1b9))
 - fix: i discovered an error while i deactive an item and trying to edit them, but now it is solved ([33c2262](https://github.com/METR1CKA/reportsoft-helpdesk/commit/33c2262))
 - fix(v2.15.31): change user for username in navigation ([693e57e](https://github.com/METR1CKA/reportsoft-helpdesk/commit/693e57e))
 - fix(v2.15.34): properties fixed ([4530ef5](https://github.com/METR1CKA/reportsoft-helpdesk/commit/4530ef5))
@@ -11,7 +21,6 @@
 - fix views and controllers ([a1ed89b](https://github.com/METR1CKA/reportsoft-helpdesk/commit/a1ed89b))
 - refactor(v2.15.32): remove modules not used ([d4feaa5](https://github.com/METR1CKA/reportsoft-helpdesk/commit/d4feaa5))
 - refactor(v2.15.33): remove modules not used ([ca05d25](https://github.com/METR1CKA/reportsoft-helpdesk/commit/ca05d25))
-- chore: changelogs ([df5e06c](https://github.com/METR1CKA/reportsoft-helpdesk/commit/df5e06c))
 
 ## <small>2.15.30 (2024-04-07)</small>
 
