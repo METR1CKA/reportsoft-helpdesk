@@ -91,7 +91,7 @@ class ProjectsController extends Controller
 
       return redirect()
         ->back()
-        ->withErrors(['description' => 'There was an error creating the description.']);
+        ->withErrors(['error' => 'There was an error creating the Project.']);
     }
 
     return redirect()->route('projects.index')
@@ -110,7 +110,7 @@ class ProjectsController extends Controller
     if (!$project || !$project->active) {
       return redirect()
         ->back()
-        ->with('status', 'Cannot edit project, it is deactivated');
+        ->withErrors(['error' => 'Cannot edit project, it is deactivated']);
     }
 
     return view('modules.projects.edit', [
@@ -158,7 +158,7 @@ class ProjectsController extends Controller
 
       return redirect()
         ->back()
-        ->withErrors(['description' => 'There was an error updating the Report Status']);
+        ->withErrors(['error' => 'There was an error updating the Report Status']);
     }
 
     return redirect()->route('projects.index')
@@ -170,40 +170,12 @@ class ProjectsController extends Controller
    */
   public function destroy($id): RedirectResponse
   {
-    Log::info('REQUEST TO DELETE PROJECT', [
-      'ACTION' => 'Delete Project',
-      'CONTROLLER' => ProjectsController::class,
-      'USER-AUTH' => Auth::user(),
-      'ID' => $id,
-      'METHOD' => 'destroy',
-    ]);
-
     $this->authorize('isValidRole', Auth::user());
 
     $project = Project::find($id);
 
-    if (!$project) {
-      Log::alert('PROJECT NOT FOUND', [
-        'STATUS' => 'ERROR',
-        'ACTION' => 'Delete project',
-        'USER-AUTH' => Auth::user(),
-        'PROJECT' => $project ?? 'NOT FOUND',
-      ]);
-
-      return redirect()
-        ->back()
-        ->withErrors(['error' => 'User not found']);
-    }
-
     $project->update([
       'active' => !$project->active
-    ]);
-
-    Log::info('PROJECT DELETED', [
-      'STATUS' => 'SUCCESS',
-      'ACTION' => 'Delete project',
-      'USER-AUTH' => Auth::user(),
-      'PROJECT' => $project,
     ]);
 
     return redirect()->route('projects.index')

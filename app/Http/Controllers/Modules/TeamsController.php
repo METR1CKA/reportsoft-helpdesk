@@ -89,7 +89,7 @@ class TeamsController extends Controller
 
       return redirect()
         ->back()
-        ->withErrors(['name' => 'There was an error creating the user.']);
+        ->withErrors(['error' => 'There was an error creating the user.']);
     }
 
     return redirect()->route('teams.index')
@@ -108,7 +108,7 @@ class TeamsController extends Controller
     if (!$team || !$team->active) {
       return redirect()
       ->back()
-      ->with('status', 'Cannot edit team, it is deactivated');
+      ->withErrors(['error' => 'Cannot edit team, it is deactivated']);
     }
 
     return view('modules.teams.edit', [
@@ -128,7 +128,7 @@ class TeamsController extends Controller
     if (!$team || !$team->active) {
       return redirect()
         ->back()
-        ->withErrors(['name', 'Team not found']);
+        ->withErrors(['error', 'Team not found']);
     }
 
     $data = $request->validated();
@@ -155,7 +155,7 @@ class TeamsController extends Controller
 
       return redirect()
         ->back()
-        ->withErrors(['name', 'There was an error updating the team.']);
+        ->withErrors(['error', 'There was an error updating the team.']);
     }
 
     return redirect()->route('teams.index')
@@ -167,40 +167,12 @@ class TeamsController extends Controller
    */
   public function destroy($id): RedirectResponse
   {
-    Log::info('REQUEST TO DELETE TEAM', [
-      'ACTION' => 'Delete Team',
-      'CONTROLLER' => TeamsController::class,
-      'USER-AUTH' => Auth::user(),
-      'ID' => $id,
-      'METHOD' => 'destroy',
-    ]);
-
     $this->authorize('isValidRole', Auth::user());
 
     $team = Team::find($id);
 
-    if (!$team) {
-      Log::alert('TEAM NOT FOUND', [
-        'STATUS' => 'ERROR',
-        'ACTION' => 'Delete role',
-        'USER-AUTH' => Auth::user(),
-        'TEAM' => $team ?? 'NOT FOUND',
-      ]);
-
-      return redirect()
-        ->back()
-        ->withErrors(['error' => 'Team not found']);
-    }
-
     $team->update([
       'active' => !$team->active
-    ]);
-
-    Log::info('TEAM DELETED', [
-      'STATUS' => 'SUCCESS',
-      'ACTION' => 'Delete role',
-      'USER-AUTH' => Auth::user(),
-      'TEAM' => $team,
     ]);
 
     return redirect()->route('teams.index')

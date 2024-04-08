@@ -22,7 +22,7 @@
               @method('get')
 
               <x-auth-session-status :status="session('status')" />
-              <x-input-error :messages="$errors->get('search')" />
+              <x-input-error :messages="$errors->get('error')" />
               <x-text-input
                 id="search"
                 placeholder="Search Report Status"
@@ -80,7 +80,6 @@
               @endforeach
             </tbody>
           </table>
-          <x-input-error class="mt-2" :messages="$errors->get('error')" />
         </div>
       </div>
     </div>

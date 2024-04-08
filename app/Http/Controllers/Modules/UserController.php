@@ -158,7 +158,7 @@ class UserController extends Controller
 
       return redirect()
         ->back()
-        ->withErrors(['role_id' => 'There was an error creating the user.']);
+        ->withErrors(['error' => 'There was an error creating the user.']);
     }
 
     return redirect()->route('users.index')
@@ -177,7 +177,7 @@ class UserController extends Controller
     if (!$user->active) {
       return redirect()
         ->back()
-        ->with('status', 'Cannot edit user, it is deactivated');
+        ->withErrors(['error' => 'Cannot edit user, it is deactivated']);
     }
 
     $roles = Role::getRoles();
@@ -235,7 +235,7 @@ class UserController extends Controller
 
       return redirect()
         ->back()
-        ->withErrors(['role_id' => 'There was an error updating the user.']);
+        ->withErrors(['error' => 'There was an error updating the user.']);
     }
 
     return redirect()->route('users.index')

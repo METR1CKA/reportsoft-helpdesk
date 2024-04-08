@@ -90,7 +90,7 @@ class ReportStatusesController extends Controller
 
       return redirect()
         ->back()
-        ->withErrors(['description' => 'There was an error creating the report status.']);
+        ->withErrors(['error' => 'There was an error creating the report status.']);
     }
 
     return redirect()->route('report_statuses.index')
@@ -109,7 +109,7 @@ class ReportStatusesController extends Controller
     if (!$report_status || !$report_status->active) {
       return redirect()
         ->back()
-        ->with('status', 'Cannot edit report status, it is deactivated');
+        ->withErrors(['error' => 'Cannot edit report status, it is deactivated']);
     }
 
     return view('modules.report_statuses.edit', [
@@ -129,7 +129,7 @@ class ReportStatusesController extends Controller
     if (!$report_status || !$report_status->active) {
       return redirect()
         ->back()
-        ->withErrors(['description' => 'Report Status not found']);
+        ->withErrors(['error' => 'Report Status not found']);
     }
 
     $data = $request->validated();
@@ -157,7 +157,7 @@ class ReportStatusesController extends Controller
 
       return redirect()
         ->back()
-        ->withErrors(['description' => 'There was an error updating the report status.']);
+        ->withErrors(['error' => 'There was an error updating the report status.']);
     }
 
     return redirect()->route('report_statuses.index')
@@ -169,40 +169,12 @@ class ReportStatusesController extends Controller
    */
   public function destroy($id): RedirectResponse
   {
-    Log::info('REQUEST TO DELETE REPORT STATUS', [
-      'ACTION' => 'Delete report status',
-      'CONTROLLER' => ReportStatusesController::class,
-      'USER-AUTH' => Auth::user(),
-      'ID' => $id,
-      'METHOD' => 'destroy',
-    ]);
-
     $this->authorize('isValidRole', Auth::user());
 
     $report_status = ReportStatus::find($id);
 
-    if (!$report_status) {
-      Log::alert('REPORT STATUS NOT FOUND', [
-        'STATUS' => 'ERROR',
-        'ACTION' => 'Delete report status',
-        'USER-AUTH' => Auth::user(),
-        'REPORT STATUS' => $report_status ?? 'NOT FOUND',
-      ]);
-
-      return redirect()
-        ->back()
-        ->withErrors(['error' => 'User not found']);
-    }
-
     $report_status->update([
       'active' => !$report_status->active
-    ]);
-
-    Log::info('REPORT STATUS DELETED', [
-      'STATUS' => 'SUCCESS',
-      'ACTION' => 'Delete report status',
-      'USER-AUTH' => Auth::user(),
-      'REPORT STATUS' => $report_status,
     ]);
 
     return redirect()->route('report_statuses.index')

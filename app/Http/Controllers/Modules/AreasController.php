@@ -109,7 +109,7 @@ class AreasController extends Controller
     if (!$area || !$area->active) {
       return redirect()
         ->back()
-        ->with('status', 'Cannot edit area, it is deactivated');
+        ->withErrors(['error' => 'Cannot edit area, it is deactivated']);
     }
 
     return view('modules.areas.edit', [
