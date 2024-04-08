@@ -11,12 +11,14 @@
       <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 text-gray-900 dark:text-gray-100">
           <div class="flex justify-between mb-6" >
+            @can('is-admin-coordinator')
             <a href="{{ route('reports.create') }}">
               <x-primary-button>
                 <i class="fas fa-user-plus"> </i>
                 {{ __('Create New Report') }}
               </x-primary-button>
             </a>
+            @endcan
             <form method="get" action="{{ route('reports.show') }}" class="flex">
               @csrf
               @method('get')
@@ -50,8 +52,10 @@
                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Description</th>
                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Comments</th>
                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Status</th>
+                @can('is-admin-coordinator')
                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Edit</th>
                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Delete</th>
+                @endcan
               </tr>
             </thead>
             <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
@@ -66,6 +70,7 @@
                 <td class="px-3 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $report->description }}</td>
                 <td class="px-3 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $report->comments }}</td>
                 <td class="px-3 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $report->active ? 'Active' : 'Inactive' }}</td>
+                @can('is-admin-coordinator')
                 <td class="px-3 py-4 whitespace-nowrap">
                   <form method="get" action="{{ route('reports.update', $report->id) }}">
                     @csrf
@@ -88,6 +93,7 @@
                     </button>
                   </form>
                 </td>
+                @endcan
               </tr>
               @endforeach
             </tbody>

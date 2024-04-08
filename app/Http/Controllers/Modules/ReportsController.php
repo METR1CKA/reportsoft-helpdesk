@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\Reports\CreateRequest;
@@ -24,8 +25,6 @@ class ReportsController extends Controller
    */
   public function index()
   {
-    $this->authorize('isValidRole', Auth::user());
-
     $reports = Report::with('user', 'area', 'enterprise', 'project', 'reportStatus')
       ->orderBy('id', 'desc')
       ->where('active', true)
@@ -77,7 +76,7 @@ class ReportsController extends Controller
    */
   public function create()
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $query_users = User::select(['id', 'username'])
       ->orderBy('id', 'desc')
@@ -122,7 +121,7 @@ class ReportsController extends Controller
    */
   public function store(CreateRequest $request)
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $data = $request->validated();
 
@@ -168,7 +167,7 @@ class ReportsController extends Controller
    */
   public function edit($id)
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $report = Report::where('id', $id)->first();
 
@@ -222,7 +221,7 @@ class ReportsController extends Controller
    */
   public function update(UpdateRequest $request, string $id)
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $report = Report::find($id);
 
@@ -269,7 +268,7 @@ class ReportsController extends Controller
    */
   public function destroy($id)
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $report = Report::find($id);
 
