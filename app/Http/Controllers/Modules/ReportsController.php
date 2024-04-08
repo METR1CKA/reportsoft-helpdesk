@@ -25,10 +25,22 @@ class ReportsController extends Controller
    */
   public function index()
   {
+    $roles = Role::getRoles();
+
     $reports = Report::with('user', 'area', 'enterprise', 'project', 'reportStatus')
       ->orderBy('id', 'desc')
-      ->where('active', true)
       ->get();
+
+    $is_guest = Auth::user()->role()
+      ->where('roles.id', '!=', $roles['ADMIN'])
+      ->where('roles.id', '!=', $roles['COORDINATOR'])
+      ->exists();
+
+    if ($is_guest) {
+      $reports = $reports->filter(function ($report) {
+        return $report->active && $report->user_id == Auth::id();
+      });
+    }
 
     return view('modules.reports.table', [
       'reports' => $reports,
