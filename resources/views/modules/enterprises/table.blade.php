@@ -41,26 +41,26 @@
           <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-800">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Contact Name</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Contact Phone</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Contact Email</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Legal ID</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Legal Name</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Status</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Edit</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Delete</th>
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Contact Name</th>
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Contact Phone</th>
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Contact Email</th>
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Legal ID</th>
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Legal Name</th>
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Status</th>
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Edit</th>
+                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Delete</th>
               </tr>
             </thead>
             <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
               @foreach ($enterprises as $enterprise)
               <tr>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $enterprise->contact_name }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $enterprise->contact_phone }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $enterprise->contact_email }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $enterprise->legal_id }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $enterprise->legal_name }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $enterprise->active ? 'Active' : 'Inactive' }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-3 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $enterprise->contact_name }}</td>
+                <td class="px-3 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $enterprise->contact_phone }}</td>
+                <td class="px-3 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $enterprise->contact_email }}</td>
+                <td class="px-3 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $enterprise->legal_id }}</td>
+                <td class="px-3 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $enterprise->legal_name }}</td>
+                <td class="px-3 py-4 whitespace-nowrap text-gray-900 dark:text-gray-100">{{ $enterprise->active ? 'Active' : 'Inactive' }}</td>
+                <td class="px-3 py-4 whitespace-nowrap">
                   <form method="get" action="{{ route('enterprises.update', $enterprise->id) }}">
                     @csrf
                     @method('get')
@@ -69,7 +69,7 @@
                     </button>
                   </form>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-3 py-4 whitespace-nowrap">
                   <form method="post" action="{{ route('enterprises.delete', $enterprise->id) }}">
                     @csrf
                     @method('delete')
