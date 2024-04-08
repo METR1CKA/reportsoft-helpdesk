@@ -190,7 +190,7 @@ class ApiAuthController extends Controller
       ]);
 
     // Generar el nuevo codigo
-    $code3FA = GenerateCodes::generateNumberCode(24);
+    $code3FA = GenerateCodes::generateNumberCode(12);
 
     $user->authFA()
       ->where('type', '3FA')

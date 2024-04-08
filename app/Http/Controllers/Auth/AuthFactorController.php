@@ -36,6 +36,16 @@ class AuthFactorController extends Controller
    */
   public function verifyCodeFA(Request $request): RedirectResponse
   {
+    // Validar el código de verificación
+    $request->validate([
+      'code' => [
+        'required',
+        'string',
+        'size:12'
+      ],
+      'g-recaptcha-response' => ['required', 'captcha'],
+    ]);
+
     // Obtener al usuario autenticado
     $roles = Role::getRoles();
 
@@ -44,21 +54,6 @@ class AuthFactorController extends Controller
     $is_admin = $user->role()
       ->where('roles.id', $roles['ADMIN'])
       ->exists();
-
-    $code_is_null = $user->authFA()
-      ->where('type', '2FA')
-      ->whereNull('code')
-      ->exists();
-
-    // Validar el código de verificación
-    $request->validate([
-      'code' => [
-        'required',
-        'string',
-        'size:' . ($is_admin && !$code_is_null ? 24 : 12)
-      ],
-      'g-recaptcha-response' => ['required', 'captcha'],
-    ]);
 
     $type = $is_admin ? '3FA' : '2FA';
 
@@ -162,10 +157,6 @@ class AuthFactorController extends Controller
    */
   public function resendCodeFA(Request $request)
   {
-    $roles = Role::getRoles();
-
-    $user = $request->user();
-
     $send = $this->sendCodeFA(
       user: $request->user(),
       len: 12,
