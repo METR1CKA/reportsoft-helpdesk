@@ -46,19 +46,6 @@ class Role extends Model
   }
 
   /**
-   * Obtiene las vistas asociados al rol.
-   */
-  public function views(): BelongsToMany
-  {
-    return $this->belongsToMany(
-      related: View::class,
-      table: 'roles_views',
-      foreignPivotKey: 'role_id',
-      relatedPivotKey: 'view_id',
-    );
-  }
-
-  /**
    * Obtiene los roles de la base de datos.
    */
   public static function getRoles()
