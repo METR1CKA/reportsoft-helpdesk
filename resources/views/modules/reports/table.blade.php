@@ -1,4 +1,5 @@
 <x-app-layout>
+@can('is-admin-coordinator-guest')
   <x-slot name="header">
     <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
       {{ __('Reports') }}
@@ -102,4 +103,5 @@
       </div>
     </div>
   </div>
+@endcan
 </x-app-layout>

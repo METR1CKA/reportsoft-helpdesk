@@ -48,7 +48,9 @@
                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Legal Name</th>
                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Status</th>
                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Edit</th>
+                @can('is-admin')
                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">Delete</th>
+                @endcan
               </tr>
             </thead>
             <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
@@ -69,6 +71,7 @@
                     </button>
                   </form>
                 </td>
+                @can('is-admin')
                 <td class="px-3 py-4 whitespace-nowrap">
                   <form method="post" action="{{ route('enterprises.delete', $enterprise->id) }}">
                     @csrf
@@ -82,6 +85,7 @@
                     </button>
                   </form>
                 </td>
+                @endcan
               </tr>
               @endforeach
             </tbody>

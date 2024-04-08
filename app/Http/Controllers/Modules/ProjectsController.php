@@ -12,13 +12,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class ProjectsController extends Controller
 {
 
   public function index(): View
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $projects = Project::orderBy('id', 'desc')->get();
 
@@ -32,6 +33,8 @@ class ProjectsController extends Controller
    */
   public function show(Request $request)
   {
+    Gate::authorize('is-admin-coordinator');
+
     $request->validate([
       'search' => ['required', 'string']
     ]);
@@ -52,7 +55,7 @@ class ProjectsController extends Controller
    */
   public function create(): View
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     return view('modules.projects.create', []);
   }
@@ -62,7 +65,7 @@ class ProjectsController extends Controller
    */
   public function store(CreateRequest $request): RedirectResponse
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $data = $request->validated();
 
@@ -103,7 +106,7 @@ class ProjectsController extends Controller
    */
   public function edit($id)
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $project = Project::where('id', $id)->first();
 
@@ -123,7 +126,7 @@ class ProjectsController extends Controller
    */
   public function update(UpdateRequest $request, $id): RedirectResponse
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $project = Project::find($id);
 
@@ -170,7 +173,7 @@ class ProjectsController extends Controller
    */
   public function destroy($id): RedirectResponse
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $project = Project::find($id);
 

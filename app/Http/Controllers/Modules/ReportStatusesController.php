@@ -12,12 +12,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class ReportStatusesController extends Controller
 {
   public function index(): View
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $report_statuses = ReportStatus::orderBy('id', 'desc')->get();
 
@@ -31,6 +32,8 @@ class ReportStatusesController extends Controller
    */
   public function show(Request $request)
   {
+    Gate::authorize('is-admin-coordinator');
+
     $request->validate([
       'search' => ['required', 'string']
     ]);
@@ -51,7 +54,7 @@ class ReportStatusesController extends Controller
    */
   public function create(): View
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     return view('modules.report_statuses.create');
   }
@@ -61,7 +64,7 @@ class ReportStatusesController extends Controller
    */
   public function store(CreateRequest $request): RedirectResponse
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $data = $request->validated();
 
@@ -102,7 +105,7 @@ class ReportStatusesController extends Controller
    */
   public function edit($id)
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $report_status = ReportStatus::where('id', $id)->first();
 
@@ -122,7 +125,7 @@ class ReportStatusesController extends Controller
    */
   public function update(UpdateRequest $request, $id): RedirectResponse
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $report_status = ReportStatus::find($id);
 
@@ -169,7 +172,7 @@ class ReportStatusesController extends Controller
    */
   public function destroy($id): RedirectResponse
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin');
 
     $report_status = ReportStatus::find($id);
 

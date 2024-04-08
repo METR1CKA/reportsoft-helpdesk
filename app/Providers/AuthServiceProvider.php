@@ -25,23 +25,23 @@ class AuthServiceProvider extends ServiceProvider
   public function boot(): void
   {
     // ADMIN
-    // - USERS crud
-    // - ROLES crud
+    // - USERS crud x
+    // - ROLES crud x
     // - LOG VIEWER xxxx
-    // - TEAMS crud
-    // - AREAS crud
-    // - REPORT STATUS crud
-    // - PROJECTS crud
+    // - TEAMS crud x
+    // - AREAS crud x
+    // - REPORT STATUS crud x
+    // - PROJECTS crud x
     // - ENTERPRISES crud
-    // - REPORTS crud
+    // - REPORTS crud x
 
     // COORDINATOR
-    // - TEAMS crud
-    // - AREAS cru
-    // - REPORT STATUS cru
-    // - PROJECTS crud
+    // - TEAMS crud x
+    // - AREAS cru x
+    // - REPORT STATUS cru x
+    // - PROJECTS crud x
     // - ENTERPRISES cru
-    // - REPORTS crud
+    // - REPORTS crud x
 
     // GUEST
     // - REPORTS r

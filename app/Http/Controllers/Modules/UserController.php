@@ -16,6 +16,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
@@ -24,8 +25,7 @@ class UserController extends Controller
    */
   public function index(): View
   {
-    $this->authorize('isValidRole', Auth::user());
-
+    Gate::authorize('is-admin');
     $user_id = Auth::id();
 
     $users = User::with('role')
@@ -43,6 +43,7 @@ class UserController extends Controller
    */
   public function show(Request $request)
   {
+    Gate::authorize('is-admin');
     $request->validate([
       'search' => ['required', 'string']
     ]);
@@ -72,6 +73,7 @@ class UserController extends Controller
    */
   public function create(): View
   {
+    Gate::authorize('is-admin');
     $this->authorize('isValidRole', Auth::user());
 
     $roles = Role::getRoles();
@@ -86,7 +88,7 @@ class UserController extends Controller
    */
   public function store(CreateRequest $request): RedirectResponse
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin');
 
     $data = $request->validated();
 
@@ -170,6 +172,8 @@ class UserController extends Controller
    */
   public function edit($id)
   {
+    Gate::authorize('is-admin');
+
     $this->authorize('isValidRole', Auth::user());
 
     $user = User::where('id', $id)->with('role')->first();
@@ -193,7 +197,7 @@ class UserController extends Controller
    */
   public function update(UpdateRequest $request, $id): RedirectResponse
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin');
 
     $user = User::find($id);
 
@@ -247,7 +251,7 @@ class UserController extends Controller
    */
   public function destroy($id): RedirectResponse
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin');
 
     $user = User::find($id);
 

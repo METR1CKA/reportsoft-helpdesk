@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class EnterprisesController extends Controller
 {
@@ -18,7 +19,7 @@ class EnterprisesController extends Controller
    */
   public function index()
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $enterprises = Enterprise::orderBy('id', 'desc')->get();
 
@@ -33,6 +34,8 @@ class EnterprisesController extends Controller
    */
   public function show(Request $request)
   {
+    Gate::authorize('is-admin-coordinator');
+
     $request->validate([
       'search' => ['required', 'string']
     ]);
@@ -57,7 +60,7 @@ class EnterprisesController extends Controller
    */
   public function create()
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     return view('modules.enterprises.create');
   }
@@ -67,7 +70,7 @@ class EnterprisesController extends Controller
    */
   public function store(CreateRequest $request)
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $data = $request->validated();
 
@@ -110,7 +113,7 @@ class EnterprisesController extends Controller
    */
   public function edit($id)
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $enterprise = Enterprise::where('id', $id)->first();
 
@@ -130,7 +133,7 @@ class EnterprisesController extends Controller
    */
   public function update(UpdateRequest $request, string $id)
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $enterprise = Enterprise::find($id);
 
@@ -174,7 +177,7 @@ class EnterprisesController extends Controller
    */
   public function destroy($id)
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin');
 
     $enterprise = Enterprise::find($id);
 

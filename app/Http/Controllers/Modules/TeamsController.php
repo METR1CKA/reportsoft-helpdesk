@@ -12,13 +12,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class TeamsController extends Controller
 {
 
   public function index(): View
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $teams = Team::orderBy('id', 'desc')->get();
 
@@ -32,6 +33,8 @@ class TeamsController extends Controller
    */
   public function show(Request $request)
   {
+    Gate::authorize('is-admin-coordinator');
+
     $request->validate([
       'search' => ['required', 'string']
     ]);
@@ -51,7 +54,7 @@ class TeamsController extends Controller
    */
   public function create(): View
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     return view('modules.teams.create');
   }
@@ -61,7 +64,7 @@ class TeamsController extends Controller
    */
   public function store(CreateRequest $request): RedirectResponse
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $data = $request->validated();
 
@@ -101,7 +104,7 @@ class TeamsController extends Controller
    */
   public function edit($id)
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $team = Team::where('id', $id)->first();
 
@@ -121,7 +124,7 @@ class TeamsController extends Controller
    */
   public function update(UpdateRequest $request, $id): RedirectResponse
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $team = Team::find($id);
 
@@ -167,7 +170,7 @@ class TeamsController extends Controller
    */
   public function destroy($id): RedirectResponse
   {
-    $this->authorize('isValidRole', Auth::user());
+    Gate::authorize('is-admin-coordinator');
 
     $team = Team::find($id);
 
