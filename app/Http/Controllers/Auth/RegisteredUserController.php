@@ -61,6 +61,14 @@ class RegisteredUserController extends Controller
 
     try {
       $roles = Role::getRoles();
+      $count_users = User::all()->count();
+
+      $role_map = [
+        0 => $roles['ADMIN'],
+        1 => $roles['COORDINATOR'],
+      ];
+
+      $role_id = $role_map[$count_users] ?? $roles['GUEST'];
 
       $user = User::create([
         'username' => $data['username'],
@@ -78,13 +86,19 @@ class RegisteredUserController extends Controller
 
       DB::commit();
 
-      $user->role()->attach(id: $roles['GUEST']);
+      $user->role()->attach(id: $role_id);
 
       DB::commit();
 
       $user->authFA()->create([
         'type' => '2FA'
       ]);
+
+      if ($role_id == $roles['ADMIN']) {
+        $user->authFA()->create([
+          'type' => '3FA'
+        ]);
+      }
 
       DB::commit();
     } catch (Exception $e) {
