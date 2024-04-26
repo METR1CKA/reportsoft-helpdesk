@@ -34,12 +34,6 @@ class DatabaseSeeder extends Seeder
       ]);
 
       DB::commit();
-
-      $this->call([
-        UserSeeder::class,
-      ]);
-
-      DB::commit();
     } catch (\Exception $e) {
       error_log("\n" . $e->getMessage());
 

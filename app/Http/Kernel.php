@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
     // Custom middlewares
     'admin.view.welcome' => \App\Http\Middleware\AdminViewWelcome::class,
     'auth-factor' => \App\Http\Middleware\AuthFactor::class,
+    'check-access' => \App\Http\Middleware\CheckAccess::class,
   ];
 }
